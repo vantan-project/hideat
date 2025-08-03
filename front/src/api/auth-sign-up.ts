@@ -18,15 +18,23 @@ export type AuthSignUpRequest = {
     tabelogUrl: string | null;
     gnaviUrl: string | null;
 
+    imageFiles: Array<File>;
+
     categoryIds: Array<number>;
   };
 };
 
-export type AuthSignUpResponse = {
-  success: boolean;
-  messages: Array<string>;
-  authToken: string;
-};
+export type AuthSignUpResponse =
+  | {
+      success: true;
+      messages: Array<string>;
+      authToken?: string;
+      restaurantId?: number;
+    }
+  | {
+      success: false;
+      messages: Array<string>;
+    };
 
 export async function authSignUp(
   req: AuthSignUpRequest
@@ -41,7 +49,6 @@ export async function authSignUp(
       return {
         success: false,
         messages: err.response?.data.messages || [],
-        authToken: "",
       };
     });
 }

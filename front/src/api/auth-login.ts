@@ -5,11 +5,17 @@ export type AuthLoginRequest = {
   password: string;
 };
 
-export type AuthLoginResponse = {
-  success: boolean;
-  messages: Array<string>;
-  authToken: string;
-};
+export type AuthLoginResponse =
+  | {
+      success: true;
+      messages: Array<string>;
+      authToken?: string;
+      restaurantId?: number;
+    }
+  | {
+      success: false;
+      messages: Array<string>;
+    };
 
 export async function authLogin(
   req: AuthLoginRequest
@@ -24,7 +30,6 @@ export async function authLogin(
       return {
         success: false,
         messages: err.response?.data.messages || [],
-        authToken: "",
       };
     });
 }

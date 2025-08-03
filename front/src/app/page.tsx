@@ -2,6 +2,6 @@
 
 import { Input } from "@heroui/react";
 
-export default function Home() {
-  return <Input label="name" />;
+export default function() {
+  return <Input label="name" labelPlacement="outside" />;
 }
