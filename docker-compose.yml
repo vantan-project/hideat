@@ -1,0 +1,13 @@
+services:
+  app:
+    build: ./front/
+    volumes:
+      - ./front:/front
+    ports:
+      - 3006:3000
+  api:
+    build: ./back/
+    volumes:
+      - ./back:/back
+    ports:
+     - 8086:8000
