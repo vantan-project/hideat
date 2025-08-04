@@ -36,15 +36,30 @@ class ImageController extends Controller
         }
 
         $restaurantIds = $query->pluck('id')->toArray();
-        $images = Image::whereIn('restaurant_id', $restaurantIds)
+        $images = Image::with(['restaurant', 'restaurant.images'])
+            ->whereIn('restaurant_id', $restaurantIds)
             ->inRandomOrder()
             ->limit($limit)
-            ->get(['id', 'url'])
+            ->get()
             ->map(function($item) {
                 return [
-                    'id' => $item->id,
                     'url' => $item->url,
                     'isGoogle' => false,
+                    'restaurant' => [
+                        'id' => $item->restaurant->id,
+                        'name' => $item->restaurant->name,
+                        'mapUrl' => $item->restaurant->map_url,
+
+                        'instagramUrl' => $item->restaurant->instagram_url,
+                        'tiktokUrl'   => $item->restaurant->tiktok_url,
+                        'xUrl' => $item->restaurant->x_url,
+                        'facebookUrl' => $item->restaurant->facebook_url,
+                        'lineUrl' => $item->restaurant->line_url,
+                        'tabelogUrl' => $item->restaurant->tabelog_url,
+                        'gnaviUrl' => $item->restaurant->gnavi_url,
+
+                        'imageUrls' => $item->restaurant->images->pluck('url'),
+                    ],
                 ];
             })
             ->toArray();
@@ -60,13 +75,28 @@ class ImageController extends Controller
             $googleService = new GoogleService();
             $googleImages = collect(
                 $googleService->getPlacePhotos($latitude, $longitude, $radius, $categoryName, $need)
-            )->map(function ($googleImage) {
+            )->map(function ($googleImage) use ($googleService) {
                 return [
-                    'id'       => $googleImage['id'],
-                    'url'      => $googleImage['url'],
+                    'url' => $googleImage['url'],
                     'isGoogle' => true,
+                    'restaurant' => [
+                        'id' => $googleImage['id'],
+                        'name' => $googleImage['name'],
+                        'mapUrl' => $googleService->getPlaceMapUrl($googleImage['id']),
+
+                        'instagramUrl' => null,
+                        'tiktokUrl'   => null,
+                        'xUrl' => null,
+                        'facebookUrl' => null,
+                        'lineUrl' => null,
+                        'tabelogUrl' => null,
+                        'gnaviUrl' => null,
+
+                        'imageUrls' =>$googleImage['photos'],
+                    ],
                 ];
-            });
+            })
+            ->toArray();
 
             $images = array_merge($images, $googleImages);
         }

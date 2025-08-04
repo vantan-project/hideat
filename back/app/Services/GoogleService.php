@@ -38,9 +38,9 @@ class GoogleService
         $response = Http::withHeaders([
             'Content-Type'    => 'application/json',
             'X-Goog-Api-Key'  => $this->apiKey,
-            'X-Goog-FieldMask'=> 'places.id,places.photos',
+            'X-Goog-FieldMask'=> 'places.id,places.displayName,places.photos',
         ])->post('https://places.googleapis.com/v1/places:searchText', [
-            'textQuery'     => $keyword ?? null,
+            'textQuery'     => $keyword ?? "飲食店",
             'includedType'  => 'restaurant',
             'languageCode'  => 'ja',
             'locationBias'  => [
@@ -76,7 +76,11 @@ class GoogleService
 
             $photos[] = [
                 'id' => $place['id'],
+                "name" => $place['displayName']['text'],
                 'url' => "https://places.googleapis.com/v1/{$photoResourceName}/media?key={$this->apiKey}&maxWidthPx=400",
+                'photos' => collect($place['photos'])->map(function($photo) {
+                    return "https://places.googleapis.com/v1/{$photo['name']}/media?key={$this->apiKey}&maxWidthPx=400";
+                }),
             ];
         }
 
