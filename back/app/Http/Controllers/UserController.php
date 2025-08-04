@@ -3,26 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     //
-    public function store(Request $request){
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8',
-        ]);
-        
+    public function store(StoreUserRequest $request){
         $restaurantId = Auth::user()->restaurant_id;
 
         User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
             'restaurant_id' => $restaurantId,
         ]);
 
