@@ -33,10 +33,6 @@ class StoreUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'restaurant_id.required' => 'レストランIDは必須です。',
-            'restaurant_id.integer' => 'レストランIDは整数で入力してください。',
-            'restaurant_id.exists' => '指定されたレストランは存在しません。',
-
             'name.required' => 'ユーザー名は必須です。',
             'name.string' => 'ユーザー名は文字列で入力してください。',
             'name.max' => 'ユーザー名は255文字以内で入力してください。',

@@ -11,13 +11,13 @@ class UserController extends Controller
 {
     //
     public function store(StoreUserRequest $request){
-        $restaurantId = Auth::user()->restaurant_id;
+        $restaurantId = Auth::user()->restaurantId;
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'restaurant_id' => $restaurantId,
+            'restaurantId' => $restaurantId,
         ]);
 
         return response()->json([
