@@ -9,7 +9,21 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    //
+    public function index(){
+        $restaurantId = request()->user()->restaurant_id;
+        $users = User::where('restaurant_id', $restaurantId)->get()->map(function($user) {
+            return [
+                "name" => $user["name"],
+                "email" => $user["email"]
+            ];
+        });
+
+        return response() -> json(
+            $users
+        );
+
+    }
+
     public function store(StoreUserRequest $request){
         $restaurantId = Auth::user()->restaurantId;
 
