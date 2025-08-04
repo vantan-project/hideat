@@ -14,7 +14,6 @@ class CategoryController extends Controller
                 "name" => $category["name"]
             ];
         });
-        // dd($categories -> toArray());
 
         return response() -> json(
             $categories
