@@ -10,13 +10,13 @@ export type AuthSignUpRequest = {
     name: string;
     placeId: string;
 
-    instagramUrl: string | null;
-    tiktokUrl: string | null;
-    xUrl: string | null;
-    facebookUrl: string | null;
-    lineUrl: string | null;
-    tabelogUrl: string | null;
-    gnaviUrl: string | null;
+    instagramUrl: string;
+    tiktokUrl: string;
+    xUrl: string;
+    facebookUrl: string;
+    lineUrl: string;
+    tabelogUrl: string;
+    gnaviUrl: string;
 
     imageFiles: Array<File>;
 
