@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Restaurant;
+use App\Services\GoogleService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class ImageController extends Controller
 {
@@ -57,58 +57,20 @@ class ImageController extends Controller
                 $categoryName = Category::find($categoryId)->name;
             }
 
-            $googleImages = $this->fetchGooglePlacePhotos($latitude, $longitude, $radius, $categoryName, $need);
+            $googleService = new GoogleService();
+            $googleImages = collect(
+                $googleService->getPlacePhotos($latitude, $longitude, $radius, $categoryName, $need)
+            )->map(function ($googleImage) {
+                return [
+                    'id'       => $googleImage['id'],
+                    'url'      => $googleImage['url'],
+                    'isGoogle' => true,
+                ];
+            });
 
             $images = array_merge($images, $googleImages);
         }
 
         return response()->json($images);
-    }
-
-    private function fetchGooglePlacePhotos($lat, $lng, $radiusMeters, $keyword, $limit): array
-    {
-        $apiKey = config('services.google_maps.api_key');
-        $response = Http::withHeaders([
-            'Content-Type'    => 'application/json',
-            'X-Goog-Api-Key'  => $apiKey,
-            'X-Goog-FieldMask'=> 'places.id,places.photos',
-        ])->post('https://places.googleapis.com/v1/places:searchText', [
-            'textQuery'     => $keyword ?? null,
-            'includedType'  => 'restaurant',
-            'languageCode'  => 'ja',
-            'locationBias'  => [
-                'circle' => [
-                    'center' => [
-                        'latitude'  => $lat,
-                        'longitude' => $lng,
-                    ],
-                    'radius' => $radiusMeters,
-                ],
-            ],
-        ]);
-
-        if ($response->failed()) {
-            return [];
-        }
-
-        $places = collect($response->json('places'))->shuffle()->take($limit);
-        $photos = [];
-        foreach ($places as $place) {
-            $photosList = $place['photos'];
-            $randomIndex = array_rand($photosList);
-            $photoResourceName = $photosList[$randomIndex]['name'] ?? null;
-
-            if (!$photoResourceName) {
-                continue;
-            }
-
-            $photos[] = [
-                'id' => $place['id'],
-                'url' => "https://places.googleapis.com/v1/{$photoResourceName}/media?key={$apiKey}&maxWidthPx=400",
-                'isGoogle' => true,
-            ];
-        }
-
-        return $photos;
     }
 }

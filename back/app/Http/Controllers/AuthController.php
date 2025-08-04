@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthSignUpRequest;
 use App\Models\Restaurant;
+use App\Services\GoogleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -38,12 +38,13 @@ class AuthController extends Controller
         $restaurant = $request->input('restaurant');
 
         $createdUser = DB::transaction(function () use ($user, $restaurant) {
-            $place = $this->fetchPlaceDetails($restaurant["placeId"]);
+            $googleService = new GoogleService();
+            $place = $googleService->getPlaceCoordinates($restaurant["placeId"]);
             $categoryIds = $restaurant['categoryIds'];
 
             $createdRestaurant = Restaurant::create([
                 'name' => $restaurant['name'],
-                'map_url' => $place['mapUrl'],
+                'map_url' => $googleService->getPlaceMapUrl($restaurant["placeId"]),
                 'latitude' => $place['latitude'],
                 'longitude' => $place['longitude'],
                 'instagram_url' => data_get($restaurant, 'instagramUrl', null),
@@ -69,22 +70,5 @@ class AuthController extends Controller
             "messages" => ["登録が完了しました。"],
             "authToken" => $createdUser->createToken('authToken')->plainTextToken,
         ]);
-    }
-
-    private function fetchPlaceDetails(string $placeId)
-    {
-        $apiKey = config('services.google_maps.api_key');
-        $response = Http::withHeaders([
-            'Content-Type'    => 'application/json',
-            'X-Goog-Api-Key'  => $apiKey,
-            'X-Goog-FieldMask'=> 'location.latitude,location.longitude',
-        ])->get("https://places.googleapis.com/v1/places/{$placeId}");
-
-        $placeData = $response->json();
-        return [
-            'mapUrl' => "https://www.google.com/maps/place/?q=place_id:{$placeId}",
-            'latitude' => $placeData['location']['latitude'] ?? null,
-            'longitude' => $placeData['location']['longitude'] ?? null,
-        ];
     }
 }
