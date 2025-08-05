@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/sign-up', [AuthController::class, 'signUp']);
+    Route::delete('/', [AuthController::class, 'destory']);
 });
 
 Route::prefix('image')->group(function () {
