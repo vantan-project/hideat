@@ -71,4 +71,36 @@ class AuthController extends Controller
             "authToken" => $createdUser->createToken('authToken')->plainTextToken,
         ]);
     }
+
+    public function destroy() {
+        $restaurantId = request()->user()->restaurant_id;
+        // 削除が必要なテーブル：users, restaurans, images, resutrant_categories
+        $restaurant = Restaurant::find($restaurantId);
+
+        if (!$restaurant) {
+            return response()->json([
+                "success" => false,
+                "messages" => ["レストランが見つかりません。"]
+            ], 404);
+        }
+        
+        try {
+            DB::transaction(function () use ($restaurant) {
+            $restaurant->categories()->detach();
+            $restaurant->users()->delete();
+            $restaurant->images()->delete();
+            $restaurant->delete();
+            });
+
+            return response()->json([
+                "success" => true,
+                "messages" => ["削除が完了しました。"]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "messages" => ["削除に失敗しました。"]
+            ], 500);
+        }
+    }
 }
