@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthSignUpRequest;
 use App\Models\Restaurant;
+use App\Models\Image;
 use App\Services\GoogleService;
+use App\Services\S3Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,11 +38,12 @@ class AuthController extends Controller
     public function signUp(AuthSignUpRequest $request) {
         $user = $request->input('user');
         $restaurant = $request->input('restaurant');
+        $categoryIds = $request->input('restaurant.categoryIds');
+        $files = $request->file('restaurant.imageFiles');
 
-        $createdUser = DB::transaction(function () use ($user, $restaurant) {
+        $createdUser = DB::transaction(function () use ($user, $restaurant, $categoryIds, $files) {
             $googleService = new GoogleService();
             $place = $googleService->getPlaceCoordinates($restaurant["placeId"]);
-            $categoryIds = $restaurant['categoryIds'];
 
             $createdRestaurant = Restaurant::create([
                 'name' => $restaurant['name'],
@@ -57,6 +60,18 @@ class AuthController extends Controller
             ]);
 
             $createdRestaurant->categories()->attach($categoryIds);
+            $s3Service = new S3Service();
+            $saveImages = [];
+            foreach ($files as $imageFile) {
+                $saveImages[] = [
+                    'restaurant_id' => $createdRestaurant->id,
+                    'url' => $s3Service->upload($imageFile, ''),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            Image::insert($saveImages);
 
             return $createdRestaurant->users()->create([
                 'name' => $user['name'],
