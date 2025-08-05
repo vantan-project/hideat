@@ -23,6 +23,17 @@ class UserController extends Controller
 
     }
 
+    public function destory($id) {
+        $restaurantId = request()->user()->restaurant_id;
+        
+        $user = User::where('id', $id)->where('restaurant_id', $restaurantId);
+        $user->delete();
+        return response()->json([
+            'success' => true,
+            'messages' => ["ユーザーを削除しました。"]
+        ], 200);
+    }
+
     public function store(StoreUserRequest $request){
         $restaurantId = request()->user()->restaurant_id;
 
