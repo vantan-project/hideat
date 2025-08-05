@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -24,14 +23,25 @@ class UserController extends Controller
 
     }
 
+    public function destory($id) {
+        $restaurantId = request()->user()->restaurant_id;
+        
+        $user = User::where('id', $id)->where('restaurant_id', $restaurantId);
+        $user->delete();
+        return response()->json([
+            'success' => true,
+            'messages' => ["ユーザーを削除しました。"]
+        ], 200);
+    }
+
     public function store(StoreUserRequest $request){
-        $restaurantId = Auth::user()->restaurantId;
+        $restaurantId = request()->user()->restaurant_id;
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'restaurantId' => $restaurantId,
+            'restaurant_id' => $restaurantId,
         ]);
 
         return response()->json([
