@@ -83,9 +83,7 @@ class AuthController extends Controller
         }
         
         try {
-            DB::transaction(function () use ($restaurant) {
-                $restaurant->delete();
-            });
+            $restaurant->delete();
 
             return response()->json([
                 "success" => true,
