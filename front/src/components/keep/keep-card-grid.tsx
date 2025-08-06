@@ -1,4 +1,3 @@
-import { type KeepRestaurant } from "@/api/keep-index";
 import KeepCard from "./keep-card";
 import { Keep } from "@/type/keep";
 

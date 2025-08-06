@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { keepIndex, type KeepRestaurant } from "@/api/keep-index";
 import KeepCardGrid from "@/components/keep/keep-card-grid";
 import KeepActionButtons from "@/components/keep/keep-action-buttons";
 import Cookies from "js-cookie";
