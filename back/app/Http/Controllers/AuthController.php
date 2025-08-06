@@ -73,9 +73,7 @@ class AuthController extends Controller
     }
 
     public function destroy() {
-        $restaurantId = request()->user()->restaurant_id;
-        // 削除が必要なテーブル：users, restaurans, images, resutrant_categories
-        $restaurant = Restaurant::find($restaurantId);
+        $restaurant = request()->user()->restaurant;
 
         if (!$restaurant) {
             return response()->json([
@@ -86,10 +84,7 @@ class AuthController extends Controller
         
         try {
             DB::transaction(function () use ($restaurant) {
-            $restaurant->categories()->detach();
-            $restaurant->users()->delete();
-            $restaurant->images()->delete();
-            $restaurant->delete();
+                $restaurant->delete();
             });
 
             return response()->json([
