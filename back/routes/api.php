@@ -30,7 +30,7 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('image')->group(function () {
-    Route::get('/', [ImageController::class, 'index']);
+    // Route::get('/', [ImageController::class, 'index']);
 });
 
 Route::prefix('category')->group(function () {
