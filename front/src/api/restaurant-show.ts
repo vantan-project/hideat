@@ -16,6 +16,8 @@ export type RestaurantShowResponse = {
   gnaviUrl: string;
 
   categoryIds: Array<number>;
+
+  imageUrls: Array<string>;
 };
 
 export async function restaurantShow(id: number, req: RestaurantShowRequest) {
