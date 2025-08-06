@@ -1,88 +1,142 @@
 "use client";
 
-import { Button, Card, CardBody, CardFooter, Image } from "@heroui/react";
-import { Plus, MousePointer, Trash2, Home } from "lucide-react";
+import { useState, useEffect } from "react";
+import { keepIndex, type KeepRestaurant } from "@/api/keep-index";
+import KeepHeader from "@/components/keep/keep-header";
+import KeepCardGrid from "@/components/keep/keep-card-grid";
+import KeepActionButtons from "@/components/keep/keep-action-buttons";
+import KeepHomeButton from "@/components/keep/keep-home-button";
 
 export default function KeepPage() {
-  // サンプルデータ
-  const keptRestaurants = [
-    { id: 1, name: "abcレストラン", image: "/IMG_20250216_102944.jpg" },
-    { id: 2, name: "abcレストラン", image: "/IMG_20250216_102944.jpg" },
-    { id: 3, name: "abcレストラン", image: "/IMG_20250216_102944.jpg" },
-    { id: 4, name: "abcレストラン", image: "/IMG_20250216_102944.jpg" },
-    { id: 5, name: "abcレストラン", image: "/IMG_20250216_102944.jpg" },
-    { id: 6, name: "abcレストラン", image: "/IMG_20250216_102944.jpg" },
-  ];
+  const [keptRestaurants, setKeptRestaurants] = useState<KeepRestaurant[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [isAllSelected, setIsAllSelected] = useState(false);
+
+  // データ取得
+  useEffect(() => {
+    const fetchKeepData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await keepIndex();
+        
+        if (response.success) {
+          setKeptRestaurants(response.data);
+        } else {
+          setError(response.message || "データの取得に失敗しました");
+        }
+      } catch (err) {
+        setError("データの取得中にエラーが発生しました");
+        console.error("Keep data fetch error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchKeepData();
+  }, []);
+
+  const toggleSelectionMode = () => {
+    if (isSelectionMode) {
+      // 選択モードを終了
+      setSelectedItems([]);
+      setIsSelectionMode(false);
+      setIsAllSelected(false);
+    } else {
+      // 選択モードを開始
+      setIsSelectionMode(true);
+      setIsAllSelected(false);
+    }
+  };
+
+  const selectAll = () => {
+    const allIds = keptRestaurants.map(item => item.id);
+    setSelectedItems(allIds);
+    setIsSelectionMode(true);
+    setIsAllSelected(true);
+  };
+
+  const selectItem = (id: number) => {
+    console.log(`selectItem called with id: ${id}`);
+    const isSelected = selectedItems.includes(id);
+    console.log(`isSelected: ${isSelected}, current selectedItems:`, selectedItems);
+    
+    if (isSelected) {
+      // 選択解除
+      const newSelectedItems = selectedItems.filter(itemId => itemId !== id);
+      setSelectedItems(newSelectedItems);
+      console.log(`Removed item ${id}, new selectedItems:`, newSelectedItems);
+      
+      // 全選択状態を解除
+      if (isAllSelected) {
+        setIsAllSelected(false);
+        console.log('All selection state cleared');
+      }
+    } else {
+      // 選択追加
+      const newSelectedItems = [...selectedItems, id];
+      setSelectedItems(newSelectedItems);
+      console.log(`Added item ${id}, new selectedItems:`, newSelectedItems);
+      
+      // すべて選択されたかチェック
+      const allIds = keptRestaurants.map(item => item.id);
+      if (newSelectedItems.length === allIds.length) {
+        setIsAllSelected(true);
+        console.log('All items selected, setting isAllSelected to true');
+      }
+    }
+  };
+
+  const cancelSelection = () => {
+    setSelectedItems([]);
+    setIsSelectionMode(false);
+    setIsAllSelected(false);
+  };
+
+  const deleteSelected = () => {
+    // 削除処理（ここでは省略）
+    setSelectedItems([]);
+    setIsSelectionMode(false);
+    setIsAllSelected(false);
+  };
+
+  const showButtons = !isLoading && !error && keptRestaurants.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ヘッダー */}
-      <div className="bg-gradient-to-b from-red-800 to-red-700 text-white py-6 px-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">HIDEAT</h1>
-          <div className="flex items-center justify-center gap-2">
-            <Plus className="w-5 h-5" />
-            <span className="text-sm">店舗を追加する</span>
-          </div>
-        </div>
-      </div>
-
-      {/* メインコンテンツ */}
+      <KeepHeader />
+      
       <div className="bg-white px-4 py-6">
         <p className="text-sm text-gray-600 mb-6">
           ※キープ一覧に追加したカードは1日で削除されます。
         </p>
 
-        {/* ボタン */}
-        <div className="flex gap-3 mb-6">
-          <Button
-            variant="bordered"
-            className="flex-1 border-gray-300 text-gray-700"
-            startContent={<MousePointer className="w-4 h-4" />}
-          >
-            選択削除モード
-          </Button>
-          <Button
-            color="danger"
-            className="flex-1"
-            startContent={<Trash2 className="w-4 h-4" />}
-          >
-            一括削除
-          </Button>
-        </div>
+        <KeepActionButtons
+          isSelectionMode={isSelectionMode}
+          isAllSelected={isAllSelected}
+          selectedItems={selectedItems}
+          onToggleSelectionMode={toggleSelectionMode}
+          onSelectAll={selectAll}
+          onCancelSelection={cancelSelection}
+          onDeleteSelected={deleteSelected}
+          showButtons={showButtons}
+        />
 
-        {/* カードグリッド */}
-        <div className="grid grid-cols-2 gap-4 pb-24">
-          {keptRestaurants.map((restaurant) => (
-            <Card key={restaurant.id} className="w-full">
-              <CardBody className="p-0 flex-1 aspect-square overflow-hidden">
-                <Image
-                  alt={restaurant.name}
-                  className="w-full h-full object-cover rounded-t-lg"
-                  src={restaurant.image}
-                  fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTAwQzEzMy42MzEgMTAwIDEyMCA4Ni4zNjg5IDEyMCA3MEMxMjAgNTMuNjMxMSAxMzMuNjMxIDQwIDE1MCA0MEMxNjYuMzY5IDQwIDE4MCA1My42MzExIDE4MCA3MEMxODAgODYuMzY4OSAxNjYuMzY5IDEwMCAxNTAgMTAwWiIgZmlsbD0iI0QxRjVGRiIvPgo8cGF0aCBkPSJNMTUwIDEyMEMxMzMuNjMxIDEyMCAxMjAgMTA2LjM2OSAxMjAgOTBDMTIwIDczLjYzMTEgMTMzLjYzMSA2MCAxNTAgNjBDMTY2LjM2OSA2MCAxODAgNzMuNjMxMSAxODAgOTBDMTgwIDEwNi4zNjkgMTY2LjM2OSAxMjAgMTUwIDEyMFoiIGZpbGw9IiNGRkYwRjAiLz4KPHBhdGggZD0iTTE1MCAxNDBDMTMzLjYzMSAxNDAgMTIwIDEyNi4zNjkgMTIwIDExMEMxMjAgOTMuNjMxMSAxMzMuNjMxIDgwIDE1MCA4MEMxNjYuMzY5IDgwIDE4MCA5My42MzExIDE4MCAxMTBDMTgwIDEyNi4zNjkgMTY2LjM2OSAxNDAgMTUwIDE0MFoiIGZpbGw9IiNGRjAwMDAiLz4KPC9zdmc+"
-                  radius="none"
-                />
-              </CardBody>
-              <CardFooter className="px-3 py-2 flex justify-center flex-shrink-0">
-                <p className="text-sm font-medium text-gray-900 text-center">{restaurant.name}</p>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <KeepCardGrid
+          restaurants={keptRestaurants}
+          isLoading={isLoading}
+          error={error}
+          selectedItems={selectedItems}
+          isSelectionMode={isSelectionMode}
+          onSelect={selectItem}
+        />
       </div>
 
-      {/* ホームボタン */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          isIconOnly
-          color="danger"
-          size="lg"
-          className="rounded-full shadow-lg hover:scale-110 transition-transform duration-200"
-        >
-          <Home className="w-6 h-6" />
-        </Button>
-      </div>
+      <KeepHomeButton />
     </div>
   );
 }
