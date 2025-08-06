@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HistoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,12 +18,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [UserController::class, 'store']);
         Route::get('/', [UserController::class, 'index']);
     });
+    Route::prefix('auth')->group(function () {
+        Route::delete('/', [AuthController::class, 'destroy']);
+    });
 });
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/sign-up', [AuthController::class, 'signUp']);
-    Route::delete('/', [AuthController::class, 'destory']);
 });
 
 Route::prefix('image')->group(function () {
