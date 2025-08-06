@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Restaurant;
+use App\Services\GoogleService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class ImageController extends Controller
 {
@@ -36,15 +36,33 @@ class ImageController extends Controller
         }
 
         $restaurantIds = $query->pluck('id')->toArray();
-        $images = Image::whereIn('restaurant_id', $restaurantIds)
+        $images = Image::with(['restaurant', 'restaurant.images'])
+            ->whereIn('restaurant_id', $restaurantIds)
             ->inRandomOrder()
             ->limit($limit)
-            ->get(['id', 'url'])
+            ->get()
             ->map(function($item) {
                 return [
-                    'id' => $item->id,
                     'url' => $item->url,
                     'isGoogle' => false,
+                    'restaurant' => [
+                        'id' => $item->restaurant->id,
+                        'name' => $item->restaurant->name,
+                        'mapUrl' => $item->restaurant->map_url,
+
+                        'latitude' => $item->restaurant->latitude,
+                        'longitude' => $item->restaurant->longitude,
+
+                        'instagramUrl' => $item->restaurant->instagram_url,
+                        'tiktokUrl'   => $item->restaurant->tiktok_url,
+                        'xUrl' => $item->restaurant->x_url,
+                        'facebookUrl' => $item->restaurant->facebook_url,
+                        'lineUrl' => $item->restaurant->line_url,
+                        'tabelogUrl' => $item->restaurant->tabelog_url,
+                        'gnaviUrl' => $item->restaurant->gnavi_url,
+
+                        'imageUrls' => $item->restaurant->images->pluck('url'),
+                    ],
                 ];
             })
             ->toArray();
@@ -57,58 +75,41 @@ class ImageController extends Controller
                 $categoryName = Category::find($categoryId)->name;
             }
 
-            $googleImages = $this->fetchGooglePlacePhotos($latitude, $longitude, $radius, $categoryName, $need);
+            $googleService = new GoogleService();
+            $googleImages = collect(
+                $googleService->getPlacePhotos($latitude, $longitude, $radius, $categoryName, $need)
+            );
+
+            $coordinates = $googleService->getCoordinatesBatch($googleImages->pluck('id')->toArray());
+            $googleImages = $googleImages->map(function ($googleImage) use ($googleService, $coordinates) {
+                return [
+                    'url' => $googleImage['url'],
+                    'isGoogle' => true,
+                    'restaurant' => [
+                        'id' => $googleImage['id'],
+                        'name' => $googleImage['name'],
+                        'mapUrl' => $googleService->getPlaceMapUrl($googleImage['id']),
+
+                        'latitude' => $coordinates[$googleImage['id']]['latitude'] ?? null,
+                        'longitude' => $coordinates[$googleImage['id']]['longitude'] ?? null,
+
+                        'instagramUrl' => null,
+                        'tiktokUrl'   => null,
+                        'xUrl' => null,
+                        'facebookUrl' => null,
+                        'lineUrl' => null,
+                        'tabelogUrl' => null,
+                        'gnaviUrl' => null,
+
+                        'imageUrls' =>$googleImage['photos'],
+                    ],
+                ];
+            })
+            ->toArray();
 
             $images = array_merge($images, $googleImages);
         }
 
         return response()->json($images);
-    }
-
-    private function fetchGooglePlacePhotos($lat, $lng, $radiusMeters, $keyword, $limit): array
-    {
-        $apiKey = config('services.google_maps.api_key');
-        $response = Http::withHeaders([
-            'Content-Type'    => 'application/json',
-            'X-Goog-Api-Key'  => $apiKey,
-            'X-Goog-FieldMask'=> 'places.id,places.photos',
-        ])->post('https://places.googleapis.com/v1/places:searchText', [
-            'textQuery'     => $keyword ?? null,
-            'includedType'  => 'restaurant',
-            'languageCode'  => 'ja',
-            'locationBias'  => [
-                'circle' => [
-                    'center' => [
-                        'latitude'  => $lat,
-                        'longitude' => $lng,
-                    ],
-                    'radius' => $radiusMeters,
-                ],
-            ],
-        ]);
-
-        if ($response->failed()) {
-            return [];
-        }
-
-        $places = collect($response->json('places'))->shuffle()->take($limit);
-        $photos = [];
-        foreach ($places as $place) {
-            $photosList = $place['photos'];
-            $randomIndex = array_rand($photosList);
-            $photoResourceName = $photosList[$randomIndex]['name'] ?? null;
-
-            if (!$photoResourceName) {
-                continue;
-            }
-
-            $photos[] = [
-                'id' => $place['id'],
-                'url' => "https://places.googleapis.com/v1/{$photoResourceName}/media?key={$apiKey}&maxWidthPx=400",
-                'isGoogle' => true,
-            ];
-        }
-
-        return $photos;
     }
 }
