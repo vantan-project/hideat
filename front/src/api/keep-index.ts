@@ -23,37 +23,37 @@ const demoKeepData: KeepRestaurant[] = [
   {
     id: 1,
     name: "abcレストラン",
-    image: "/IMG_20250216_102944.jpg",
+    image: "https://placehold.jp/150x150.png",
     created_at: "2025-02-16T10:30:00Z"
   },
   {
     id: 2,
     name: "xyzカフェ",
-    image: "/IMG_20250216_102944.jpg",
+    image: "https://placehold.jp/150x150.png",
     created_at: "2025-02-16T11:15:00Z"
   },
   {
     id: 3,
     name: "123ダイナー",
-    image: "/IMG_20250216_102944.jpg",
+    image: "https://placehold.jp/150x150.png",
     created_at: "2025-02-16T12:00:00Z"
   },
   {
     id: 4,
     name: "456レストラン",
-    image: "/IMG_20250216_102944.jpg",
+    image: "https://placehold.jp/150x150.png",
     created_at: "2025-02-16T13:45:00Z"
   },
   {
     id: 5,
     name: "789カフェ",
-    image: "/IMG_20250216_102944.jpg",
+    image: "https://placehold.jp/150x150.png",
     created_at: "2025-02-16T14:20:00Z"
   },
   {
     id: 6,
     name: "デモレストラン",
-    image: "/IMG_20250216_102944.jpg",
+    image: "https://placehold.jp/150x150.png",
     created_at: "2025-02-16T15:10:00Z"
   }
 ];

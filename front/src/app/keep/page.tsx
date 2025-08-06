@@ -2,32 +2,36 @@
 
 import { useState, useEffect } from "react";
 import { keepIndex, type KeepRestaurant } from "@/api/keep-index";
-import KeepHeader from "@/components/keep/keep-header";
 import KeepCardGrid from "@/components/keep/keep-card-grid";
 import KeepActionButtons from "@/components/keep/keep-action-buttons";
-import KeepHomeButton from "@/components/keep/keep-home-button";
+import Cookies from "js-cookie";
+import { Keep } from "@/type/keep";
 
 export default function KeepPage() {
-  const [keptRestaurants, setKeptRestaurants] = useState<KeepRestaurant[]>([]);
+  const [keptRestaurants, setKeptRestaurants] = useState<Keep[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [isAllSelected, setIsAllSelected] = useState(false);
+  const [keep, setKeep] = useState<Keep[]>([]);
 
   // データ取得
   useEffect(() => {
-    const fetchKeepData = async () => {
+    const fetchKeepData = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await keepIndex();
         
-        if (response.success) {
-          setKeptRestaurants(response.data);
+        const keep = Cookies.get("keep");
+        if (keep) {
+          const parsedKeep = JSON.parse(keep);
+          setKeep(parsedKeep);
+          setKeptRestaurants(parsedKeep);
         } else {
-          setError(response.message || "データの取得に失敗しました");
+          // keep Cookieが存在しない場合は空配列を設定
+          setKeptRestaurants([]);
         }
       } catch (err) {
         setError("データの取得中にエラーが発生しました");
@@ -41,16 +45,9 @@ export default function KeepPage() {
   }, []);
 
   const toggleSelectionMode = () => {
-    if (isSelectionMode) {
-      // 選択モードを終了
-      setSelectedItems([]);
-      setIsSelectionMode(false);
-      setIsAllSelected(false);
-    } else {
-      // 選択モードを開始
-      setIsSelectionMode(true);
-      setIsAllSelected(false);
-    }
+    // 選択削除モードは移行のみ（キャンセルはキャンセルボタンのみ）
+    setIsSelectionMode(true);
+    setIsAllSelected(false);
   };
 
   const selectAll = () => {
@@ -64,13 +61,13 @@ export default function KeepPage() {
     console.log(`selectItem called with id: ${id}`);
     const isSelected = selectedItems.includes(id);
     console.log(`isSelected: ${isSelected}, current selectedItems:`, selectedItems);
-    
+
     if (isSelected) {
       // 選択解除
       const newSelectedItems = selectedItems.filter(itemId => itemId !== id);
       setSelectedItems(newSelectedItems);
       console.log(`Removed item ${id}, new selectedItems:`, newSelectedItems);
-      
+
       // 全選択状態を解除
       if (isAllSelected) {
         setIsAllSelected(false);
@@ -81,7 +78,7 @@ export default function KeepPage() {
       const newSelectedItems = [...selectedItems, id];
       setSelectedItems(newSelectedItems);
       console.log(`Added item ${id}, new selectedItems:`, newSelectedItems);
-      
+
       // すべて選択されたかチェック
       const allIds = keptRestaurants.map(item => item.id);
       if (newSelectedItems.length === allIds.length) {
@@ -98,7 +95,10 @@ export default function KeepPage() {
   };
 
   const deleteSelected = () => {
-    // 削除処理（ここでは省略）
+    const updatedKeptRestaurants = keptRestaurants.filter(item => !selectedItems.includes(item.id));
+    Cookies.set("keep", JSON.stringify(updatedKeptRestaurants));
+    setKeptRestaurants(updatedKeptRestaurants);
+
     setSelectedItems([]);
     setIsSelectionMode(false);
     setIsAllSelected(false);
@@ -107,9 +107,7 @@ export default function KeepPage() {
   const showButtons = !isLoading && !error && keptRestaurants.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <KeepHeader />
-      
+    <div className="pt-10 min-h-screen bg-gray-50">
       <div className="bg-white px-4 py-6">
         <p className="text-sm text-gray-600 mb-6">
           ※キープ一覧に追加したカードは1日で削除されます。
@@ -135,8 +133,6 @@ export default function KeepPage() {
           onSelect={selectItem}
         />
       </div>
-
-      <KeepHomeButton />
     </div>
   );
 }

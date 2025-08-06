@@ -1,8 +1,9 @@
 import { type KeepRestaurant } from "@/api/keep-index";
 import KeepCard from "./keep-card";
+import { Keep } from "@/type/keep";
 
 interface KeepCardGridProps {
-  restaurants: KeepRestaurant[];
+  restaurants: Keep[];
   isLoading: boolean;
   error: string | null;
   selectedItems: number[];
@@ -18,6 +19,7 @@ export default function KeepCardGrid({
   isSelectionMode,
   onSelect
 }: KeepCardGridProps) {
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">

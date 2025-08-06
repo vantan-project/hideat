@@ -32,7 +32,7 @@ export default function KeepActionButtons({
       <div className="flex gap-3 mb-6">
         <Button
           variant="bordered"
-          className={`flex-1 font-bold ${isSelectionMode ? 'bg-blue-500 text-white border-blue-500' : 'border-gray-300 text-gray-700'}`}
+          className="flex-1 font-bold border-gray-300 text-gray-700"
           startContent={<MousePointer className="w-4 h-4" />}
           onClick={onToggleSelectionMode}
         >
@@ -54,7 +54,7 @@ export default function KeepActionButtons({
           <div className="flex gap-3">
             <Button
               variant="bordered"
-              className="flex-1 border-red-500 text-red-500 font-bold"
+              className="flex-1 border-red-500 text-red-500 bg-white font-bold"
               startContent={<X className="w-4 h-4" />}
               onClick={onCancelSelection}
             >
