@@ -8,6 +8,7 @@ class History extends Model
 {
     //
     protected $fillable = [
+        'name',
         'is_google',
         'url',
         'location_id',

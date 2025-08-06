@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('histories', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->boolean('is_google');
             $table->text('url');
             $table->string('location_id');
