@@ -9,29 +9,34 @@ use Illuminate\Http\Request;
 class RestaurantController extends Controller
 {
     public function show(Request $request, $id) {
+        
         if ($request->boolean('isGoogle')) {
             $googleService = new GoogleService();
-            $place = $googleService->getPlaceCoordinates($id);
-            $map = $googleService->getPlaceMapUrl($id);
-            $restaurant = $googleService->getPlacePhotos($place['latitude'], $place['longitude'], 0, null, 1);
+            $restaurant = $googleService->getPlaceDetails($id);
             return response()->json([
-                'name' => $restaurant[0]['name'] ?? null,
-                'mapUrl' => $map,
-                'instagramUrl' => $restaurant[0]['instagram_url'] ?? null,
-                'tiktokUrl' => $restaurant[0]['tiktok_url'] ?? null,
-                'xUrl' => $restaurant[0]['x_url'] ?? null,
-                'facebookUrl' => $restaurant[0]['facebook_url'] ?? null,
-                'lineUrl' => $restaurant[0]['line_url'] ?? null,
-                'tabelogUrl' => $restaurant[0]['tabelog_url'] ?? null,
-                'gnaviUrl' => $restaurant[0]['gnavi_url'] ?? null,
-                'imageUrls' => $restaurant[0]['photos'] ?? [],
-                'categoryIds' => $restaurant[0]['categories'] ?? null,
+                'id' => $id,
+                'name' => $restaurant['name'] ?? null,
+                'mapUrl' => $googleService->getPlaceMapUrl($id),
+                'latitude' => $restaurant['latitude'] ?? null,
+                'longitude' => $restaurant['longitude'] ?? null,
+                'instagramUrl' => $restaurant['instagram_url'] ?? null,
+                'tiktokUrl' => $restaurant['tiktok_url'] ?? null,
+                'xUrl' => $restaurant['x_url'] ?? null,
+                'facebookUrl' => $restaurant['facebook_url'] ?? null,
+                'lineUrl' => $restaurant['line_url'] ?? null,
+                'tabelogUrl' => $restaurant['tabelog_url'] ?? null,
+                'gnaviUrl' => $restaurant['gnavi_url'] ?? null,
+                'imageUrls' => $restaurant['photos'] ?? [],
+                'categoryIds' => $restaurant['categories'] ?? null,
             ]);
         } else {
             $restaurantData = Restaurant::find($id);
             return response()->json([
+                'id' => $restaurantData->id,
                 'name' => $restaurantData->name,
                 'mapUrl' => $restaurantData->map_url,
+                'latitude' => $restaurantData->latitude,
+                'longitude' => $restaurantData->longitude,
                 'instagramUrl' => $restaurantData->instagram_url,
                 'tiktokUrl' => $restaurantData->tiktok_url,
                 'xUrl' => $restaurantData->x_url,

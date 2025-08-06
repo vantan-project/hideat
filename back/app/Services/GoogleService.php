@@ -86,4 +86,26 @@ class GoogleService
 
         return $photos;
     }
+    public function getPlaceDetails(string $placeId): array
+    {
+        $response = Http::withHeaders([
+            'Content-Type'    => 'application/json',
+            'X-Goog-Api-Key'  => $this->apiKey,
+            'X-Goog-FieldMask'=> 'id,displayName,photos,location.latitude,location.longitude',
+        ])->get("https://places.googleapis.com/v1/places/{$placeId}");
+
+        if ($response->failed()) {
+            return [];
+        }
+
+        $placeData = $response->json();
+        return [
+            'id' => $placeData['id'],
+            'name' => $placeData['displayName']['text'],
+            'photos' => $placeData['photos'],
+            'latitude' => $placeData['location']['latitude'],
+            'longitude' => $placeData['location']['longitude'],
+        ];
+    }
+
 }
