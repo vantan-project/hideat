@@ -27,7 +27,10 @@ class HistoryController extends Controller
 
     public function index(HistoryIndexRequest $request)
     {
-        $histories = History::whereIn('id', $request->input('ids'))->get()->map(function ($history) {
+        $ids = $request->input('ids');
+        $histories = History::whereIn('id', $ids)->get()->keyBy('id');
+        $sorted = collect($ids)->map(function ($id) use ($histories) {
+            $history = $histories->get($id);
             return [
                 'id' => $history->id,
                 'isGoogle' => $history->is_google,
@@ -36,6 +39,6 @@ class HistoryController extends Controller
             ];
         });
 
-        return response()->json($histories);
+        return response()->json($sorted);
     }
 }
