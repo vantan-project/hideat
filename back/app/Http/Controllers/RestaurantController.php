@@ -11,23 +11,21 @@ class RestaurantController extends Controller
     public function show(Request $request, $id) {
         if ($request->boolean('isGoogle')) {
             $googleService = new GoogleService();
-            $restaurant = Restaurant::find($id);
-            if ($restaurant === null) {
-                return response()->json(['error' => 'Restaurant not found'], 404);
-            }
-            $restaurantImages = $googleService->getPlacePhotos($restaurant->latitude, $restaurant->longitude, 5000, null, 10);
+            $place = $googleService->getPlaceCoordinates($id);
+            $map = $googleService->getPlaceMapUrl($id);
+            $restaurant = $googleService->getPlacePhotos($place['latitude'], $place['longitude'], 0, null, 1);
             return response()->json([
-                'name' => $restaurant->name,
-                'mapUrl' => $restaurant->map_url,
-                'instagramUrl' => $restaurant->instagram_url,
-                'tiktokUrl' => $restaurant->tiktok_url,
-                'xUrl' => $restaurant->x_url,
-                'facebookUrl' => $restaurant->facebook_url,
-                'lineUrl' => $restaurant->line_url,
-                'tabelogUrl' => $restaurant->tabelog_url,
-                'gnaviUrl' => $restaurant->gnavi_url,
-                'imageUrls' => $restaurantImages,
-                'categoryIds' => $restaurant->categories->pluck('id')->toArray(),
+                'name' => $restaurant[0]['name'] ?? null,
+                'mapUrl' => $map,
+                'instagramUrl' => $restaurant[0]['instagram_url'] ?? null,
+                'tiktokUrl' => $restaurant[0]['tiktok_url'] ?? null,
+                'xUrl' => $restaurant[0]['x_url'] ?? null,
+                'facebookUrl' => $restaurant[0]['facebook_url'] ?? null,
+                'lineUrl' => $restaurant[0]['line_url'] ?? null,
+                'tabelogUrl' => $restaurant[0]['tabelog_url'] ?? null,
+                'gnaviUrl' => $restaurant[0]['gnavi_url'] ?? null,
+                'imageUrls' => $restaurant[0]['photos'] ?? [],
+                'categoryIds' => $restaurant[0]['categories'] ?? null,
             ]);
         } else {
             $restaurantData = Restaurant::find($id);
