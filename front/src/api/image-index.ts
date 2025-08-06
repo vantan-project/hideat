@@ -9,9 +9,26 @@ export type ImageIndexRequest = {
 };
 
 export type ImageIndexResponse = Array<{
-  restaurantId: string | number;
   url: string;
   isGoogle: boolean;
+  restaurant: {
+    id: string | number;
+    name: string;
+    mapUrl: string;
+
+    latitude: number;
+    longitude: number;
+
+    instagramUrl: string | null;
+    tiktokUrl: string | null;
+    xUrl: string | null;
+    facebookUrl: string | null;
+    lineUrl: string | null;
+    tabelogUrl: string | null;
+    gnaviUrl: string | null;
+
+    imageUrls: Array<string>
+  };
 }>;
 
 export async function imageIndex(
