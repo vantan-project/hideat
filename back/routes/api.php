@@ -41,3 +41,8 @@ Route::prefix('history')->group(function () {
     Route::post('/', [HistoryController::class, 'store']);
     Route::get('/', [HistoryController::class, 'index']);
 });
+
+Route::prefix('keep')->group(function () {
+    Route::post('/', [KeepController::class, 'store']);
+    Route::get('/', [KeepController::class, 'index']);
+});
