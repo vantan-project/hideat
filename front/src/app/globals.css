@@ -4,11 +4,10 @@
 
 @theme {
   --color-black: oklch(27.8% 0.033 256.848);
+  --color-gray: oklch(92.8% 0.006 264.531);
   --color-white: oklch(98.5% 0.002 247.839);
   --color-primary: oklch(50.5% 0.213 27.518);
 
   --color-tabelog: #f18d09;
   --color-gnavi: #dd0014;
 }
-
-

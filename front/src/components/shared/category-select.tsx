@@ -56,6 +56,7 @@ export function CategorySelect({
           categories.find((c) => c.key === String(selectedCategoryId))?.label ||
           ""
         }
+        size="sm"
       />
     </>
   );

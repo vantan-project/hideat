@@ -5,11 +5,11 @@ import {
   ImageIndexRequest,
   ImageIndexResponse,
 } from "@/api/image-index";
+import { RestaurantCardList } from "@/components/features/top/restaurant-card-list";
 import { CategorySelect } from "@/components/shared/category-select";
-import { ShowRestaurant } from "@/components/shared/show-restaurant";
-import { Button, image, Select, SelectItem } from "@heroui/react";
+import { Button, Select, SelectItem } from "@heroui/react";
 import clsx from "clsx";
-import { Pin, Shuffle } from "lucide-react";
+import { Shuffle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function () {
@@ -21,6 +21,7 @@ export default function () {
     limit: 20,
   });
   const [images, setImages] = useState<ImageIndexResponse>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -33,12 +34,14 @@ export default function () {
   }, []);
 
   const indexApi = async () => {
-    const res = await imageIndex(search);
+    setIsLoading(true);
+    const res = await imageIndex(search).finally(() => setIsLoading(false));
     setImages(res);
   };
 
   useEffect(() => {
     if (!search.latitude || !search.longitude) return;
+    setIsLoading(true);
     indexApi();
   }, [search]);
 
@@ -51,8 +54,6 @@ export default function () {
     { key: "2500", label: "2.5km以内" },
     { key: "3000", label: "3.0km以内" },
   ];
-
-  if (!images.length) return;
 
   return (
     <div>
@@ -90,14 +91,8 @@ export default function () {
           </Select>
         </div>
       </div>
-      <div className="snap-x snap-mandatory flex [&>*]:flex-shrink-0 overflow-x-auto px-[calc((100vw-300px)*0.375)]">
-        {images.map((image, index) => (
-          <ShowRestaurant
-            key={image.restaurant.id + String(index)}
-            image={image}
-          />
-        ))}
-      </div>
+
+      <RestaurantCardList images={images} isLoading={isLoading} />
     </div>
   );
 }

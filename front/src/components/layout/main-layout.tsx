@@ -11,7 +11,7 @@ export function MainLayout({ children }: Props) {
   return (
     <HeroUIProvider>
       <ToastProvider />
-      <div className="h-20 w-full fixed z-20 rounded-b-2xl shadow-2xl bg-primary flex items-center pl-4">
+      <div className="h-20 w-full fixed z-30 rounded-b-2xl shadow-2xl bg-primary flex items-center pl-4">
         <LogoIcon className="w-32 h-auto text-white" />
       </div>
       {children}
