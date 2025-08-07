@@ -2,6 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 export type UserIndexResponse = Array<{
+  id: number;
   name: string;
   email: string;
 }>;
