@@ -12,6 +12,7 @@ class UserController extends Controller
         $restaurantId = request()->user()->restaurant_id;
         $users = User::where('restaurant_id', $restaurantId)->get()->map(function($user) {
             return [
+                "id" => $user["id"],
                 "name" => $user["name"],
                 "email" => $user["email"]
             ];
