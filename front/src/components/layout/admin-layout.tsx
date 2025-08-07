@@ -43,7 +43,7 @@ export function AdminLayout({ children }: Props) {
     >
 
       {/* サイドナビバー */}
-      {(!isLoggedIn && !isSignUpPage) && (
+      {(!isLoginPage && !isSignUpPage) && (
         <aside className="w-56 bg-primary flex flex-col items-center py-6 fixed top-0 left-0 h-screen z-30">
           <LogoIcon className="w-40 h-auto text-white mb-9" />
           <nav className="w-full flex flex-col gap-0 mt-2">
@@ -60,7 +60,7 @@ export function AdminLayout({ children }: Props) {
           </nav>
         </aside>
       )}
-      <div className="pl-56">
+      <div className={!isLoggedIn && !isSignUpPage ? "" : "pl-56"}>
         {children}
       </div>
     </GlobalContext.Provider>
