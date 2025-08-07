@@ -5,6 +5,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\KeepController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +41,9 @@ Route::prefix('category')->group(function () {
 Route::prefix('history')->group(function () {
     Route::post('/', [HistoryController::class, 'store']);
     Route::get('/', [HistoryController::class, 'index']);
+});
+
+Route::prefix('keep')->group(function () {
+    Route::post('/', [KeepController::class, 'store']);
+    Route::get('/', [KeepController::class, 'index']);
 });

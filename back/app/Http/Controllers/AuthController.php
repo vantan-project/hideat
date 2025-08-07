@@ -38,8 +38,8 @@ class AuthController extends Controller
     public function signUp(AuthSignUpRequest $request) {
         $user = $request->input('user');
         $restaurant = $request->input('restaurant');
-        $categoryIds = $request->input('restaurant.categoryIds');
-        $files = $request->file('restaurant.imageFiles');
+        $categoryIds = $request->input('restaurant.categoryIds', []);
+        $files = $request->file('restaurant.imageFiles', []);
 
         $createdUser = DB::transaction(function () use ($user, $restaurant, $categoryIds, $files) {
             $googleService = new GoogleService();
@@ -96,7 +96,7 @@ class AuthController extends Controller
                 "messages" => ["レストランが見つかりません。"]
             ], 404);
         }
-        
+
         try {
             $restaurant->delete();
 

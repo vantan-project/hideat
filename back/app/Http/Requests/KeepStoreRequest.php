@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class HistoryStoreRequest extends FormRequest
+class KeepStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,16 +31,23 @@ class HistoryStoreRequest extends FormRequest
             'isGoogle' => ['required', 'boolean'],
             'url' => ['required', 'url'],
             'locationId' => ['required'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
         ];
     }
 
     public function messages(): array
     {
         return [
+            'name.required' => '名前は必須です。',
+            'name.string' => '名前は文字列である必要があります。',
+            'name.max' => '名前は255文字以内である必要があります。',
             'isGoogle.required' => 'Googleかどうかは必須です。',
             'url.required' => 'URLは必須です。',
             'url.url' => '有効なURLを入力してください。',
             'locationId.required' => 'ロケーションIDは必須です。',
+            'latitude.numeric' => '緯度は数値である必要があります。',
+            'longitude.numeric' => '経度は数値である必要があります。',
         ];
     }
 }
