@@ -5,8 +5,7 @@ import { GlobalContext } from "@/hooks/use-global-context";
 import { useEffect, useState } from "react";
 import { LogoIcon } from "../shared/icons/logo-icon";
 import { usePathname } from "next/navigation";
-import Link from "next/link"; 1
-import path from "path";
+import Link from "next/link";
 
 export type Props = {
   children: React.ReactNode;
