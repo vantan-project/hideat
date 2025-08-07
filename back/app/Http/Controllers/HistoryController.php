@@ -14,6 +14,7 @@ class HistoryController extends Controller
         $data = $request->validated();
 
         $history = History::create([
+            'name' => $data['name'],
             'is_google' => $data['isGoogle'],
             'url' => $data['url'],
             'location_id' => $data['locationId'],
@@ -33,6 +34,7 @@ class HistoryController extends Controller
             $history = $histories->get($id);
             return [
                 'id' => $history->id,
+                'name' => $history->name,
                 'isGoogle' => $history->is_google,
                 'url' => $history->url,
                 'locationId' => $history->location_id,
