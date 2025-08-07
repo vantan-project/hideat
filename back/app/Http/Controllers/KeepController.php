@@ -17,10 +17,12 @@ class KeepController extends Controller
             'is_google' => $data['isGoogle'],
             'url' => $data['url'],
             'location_id' => $data['locationId'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude'],
         ]);
 
         return response()->json([
-            'id' => $history->id,
+            'id' => $keep->id,
             'success' => true,
         ], 201);
     }
@@ -37,6 +39,8 @@ class KeepController extends Controller
                 'isGoogle' => $keep->is_google,
                 'url' => $keep->url,
                 'locationId' => $keep->location_id,
+                'latitude' => $keep->latitude,
+                'longitude' => $keep->longitude,
             ];
         });
 
