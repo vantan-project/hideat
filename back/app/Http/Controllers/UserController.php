@@ -53,7 +53,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'ユーザーを登録しました。'
+            'messages' => 'ユーザーを登録しました。'
         ], 201);
     }
 }
