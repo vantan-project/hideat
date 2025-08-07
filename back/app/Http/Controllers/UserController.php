@@ -32,7 +32,7 @@ class UserController extends Controller
                 'messages' => ["自分自身を削除することはできません。"]
             ], 403);
         }
-        $targetUser = User::where('id', $id)->where('restaurant_id', $user->restaurantId);
+        $targetUser = User::where('id', $id)->where('restaurant_id', $user->restaurant_id);
 
         $targetUser->delete();
         return response()->json([
