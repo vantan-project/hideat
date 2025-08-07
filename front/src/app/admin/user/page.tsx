@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { userIndex, UserIndexResponse } from "@/api/user-index";
 import { userDestroy } from "@/api/user-destroy";
 import { userStore } from "@/api/user-store";
-import { addToast, Input } from "@heroui/react";
+import { addToast, Input, Spinner } from "@heroui/react";
 import { PasswordInput } from "@/components/shared/password-input";
 import { Trash2 } from "lucide-react";
 
@@ -15,6 +15,7 @@ export default function UserPage() {
   const [userToDelete, setUserToDelete] = useState<{ id: number; name: string } | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", password: "", passwordConfirm: "" });
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -41,12 +42,11 @@ export default function UserPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!userToDelete) return;
-
+    if (!userToDelete || isProcessing) return;
+    setIsProcessing(true);
     try {
       const result = await userDestroy(userToDelete.id);
       if (result.success) {
-        // Remove user from local state
         setUsers(users.filter(user => user.id !== userToDelete.id));
         addToast({
           title: "ユーザーを削除しました",
@@ -67,6 +67,7 @@ export default function UserPage() {
         color: "danger",
       });
     } finally {
+      setIsProcessing(false);
       setShowDeleteModal(false);
       setUserToDelete(null);
     }
@@ -82,6 +83,7 @@ export default function UserPage() {
   };
 
   const handleAddConfirm = async () => {
+    if (isProcessing) return;
     if (!newUser.name || !newUser.email || !newUser.password || !newUser.passwordConfirm) {
       addToast({
         title: "ユーザー名、メールアドレス、パスワードを入力してください",
@@ -98,6 +100,7 @@ export default function UserPage() {
       return;
     }
 
+    setIsProcessing(true);
     try {
       const result = await userStore({
         name: newUser.name,
@@ -126,6 +129,7 @@ export default function UserPage() {
         color: "danger",
       });
     } finally {
+      setIsProcessing(false);
       setShowAddModal(false);
       setNewUser({ name: "", email: "", password: "", passwordConfirm: "" });
     }
@@ -180,10 +184,10 @@ export default function UserPage() {
             
             <button
               onClick={() => handleDeleteClick(user)}
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-red-500 hover:bg-red-600 text-white rounded-md w-10 h-10 flex items-center justify-center transition-colors shadow"
               title="ユーザーを削除"
             >
-              <Trash2 className="w-6 h-6" />
+              <Trash2 className="w-5 h-5" />
             </button>
           </div>
         ))}
@@ -192,7 +196,7 @@ export default function UserPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && userToDelete && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 backdrop-blur-sm"
           onClick={handleBackgroundClick}
         >
           <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative border border-blue-300">
@@ -206,13 +210,18 @@ export default function UserPage() {
             <div className="flex gap-4 justify-center">
               <button
                 onClick={handleDeleteConfirm}
-                className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center min-w-[80px]"
+                disabled={isProcessing}
               >
+                {isProcessing ? (
+                  <Spinner size="sm" color="white" className="mr-2" />
+                ) : null}
                 削除
               </button>
               <button
                 onClick={handleDeleteCancel}
                 className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                disabled={isProcessing}
               >
                 戻る
               </button>
@@ -224,7 +233,7 @@ export default function UserPage() {
       {/* Add User Modal */}
       {showAddModal && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 backdrop-blur-sm"
           onClick={handleBackgroundClick}
         >
           <div className="bg-white rounded-lg p-6 w-1/3 mx-4 shadow-lg">
@@ -260,13 +269,18 @@ export default function UserPage() {
             <div className="flex gap-4 justify-center">
               <button
                 onClick={handleAddConfirm}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center min-w-[80px]"
+                disabled={isProcessing}
               >
+                {isProcessing ? (
+                  <Spinner size="sm" color="white" className="mr-2" />
+                ) : null}
                 追加
               </button>
               <button
                 onClick={handleAddCancel}
                 className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                disabled={isProcessing}
               >
                 戻る
               </button>
