@@ -13,6 +13,7 @@ class KeepController extends Controller
         $data = $request->validated();
 
         $keep = Keep::create([
+            'name' => $data['name'],
             'is_google' => $data['isGoogle'],
             'url' => $data['url'],
             'location_id' => $data['locationId'],
@@ -32,6 +33,7 @@ class KeepController extends Controller
             $keep = $keeps->get($id);
             return [
                 'id' => $keep->id,
+                'name' => $keep->name,
                 'isGoogle' => $keep->is_google,
                 'url' => $keep->url,
                 'locationId' => $keep->location_id,

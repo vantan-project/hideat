@@ -27,6 +27,7 @@ class KeepStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => ['required', 'string', 'max:255'],
             'isGoogle' => ['required', 'boolean'],
             'url' => ['required', 'url'],
             'locationId' => ['required'],
