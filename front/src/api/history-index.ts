@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export type HistoryIndexRequest = Array<{
+export type HistoryIndexRequest = {
   ids: Array<number>;
-}>;
+};
 
 export type HistoryIndexResponse = Array<{
   id: number;

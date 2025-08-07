@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export type KeepIndexRequest = Array<{
+export type KeepIndexRequest = {
     ids: Array<number>;
-}>;
+};
 
 export type KeepIndexResponse = Array<{
     id: number;
