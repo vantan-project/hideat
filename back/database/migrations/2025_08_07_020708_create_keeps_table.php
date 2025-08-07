@@ -18,8 +18,8 @@ return new class extends Migration
             $table->boolean('is_google');
             $table->text('url');
             $table->string('location_id');
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
+            $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 11, 8);
         });
     }
 
