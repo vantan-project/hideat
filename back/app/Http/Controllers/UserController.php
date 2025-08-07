@@ -26,7 +26,7 @@ class UserController extends Controller
     public function destroy($id) {
         $user = request()->user();
 
-        if ($user->id === $id) {
+        if ($user->id === (int)$id) {
             return response()->json([
                 'success' => false,
                 'messages' => ["自分自身を削除することはできません。"]
@@ -53,7 +53,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'messages' => 'ユーザーを登録しました。'
+            'messages' => ['ユーザーを登録しました。']
         ], 201);
     }
 }
