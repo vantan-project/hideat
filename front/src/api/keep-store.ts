@@ -1,9 +1,12 @@
 import axios from "axios";
 
 export type KeepStoreRequest = {
+  name: string;
   isGoogle: boolean;
   url: string;
   locationId: string;
+  latitude: number;
+  longitude: number;
 };
 
 export type KeepStoreResponse = {

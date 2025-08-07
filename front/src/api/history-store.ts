@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 export type HistoryStoreRequest = {
+  name: string;
   isGoogle: boolean;
   url: string;
   locationId: string;

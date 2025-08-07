@@ -6,6 +6,7 @@ export type HistoryIndexRequest = {
 
 export type HistoryIndexResponse = Array<{
   id: number;
+  name: string;
   isGoogle: boolean;
   url: string;
   locationId: string;

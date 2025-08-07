@@ -6,9 +6,12 @@ export type KeepIndexRequest = {
 
 export type KeepIndexResponse = Array<{
     id: number;
+    name: string;
     isGoogle: boolean;
     url: string;
     locationId: string;
+    latitude: number;
+    longitude: number;
 }>;
 
 export async function keepIndex(
