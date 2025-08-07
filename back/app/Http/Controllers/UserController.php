@@ -23,7 +23,7 @@ class UserController extends Controller
 
     }
 
-    public function destory($id) {
+    public function destroy($id) {
         $user = request()->user();
 
         if ($user->id === $id) {
