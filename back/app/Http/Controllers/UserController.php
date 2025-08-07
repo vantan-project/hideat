@@ -24,22 +24,17 @@ class UserController extends Controller
     }
 
     public function destory($id) {
-        $restaurantId = request()->user()->restaurant_id;
+        $user = request()->user();
 
-        $user = User::where('id', $id)->where('restaurant_id', $restaurantId);
-        if ($user->count() === 0) {
-            return response()->json([
-                'success' => false,
-                'messages' => ["指定されたユーザーは存在しません。"]
-            ], 404);
-        }
-        if ($user === request()->user()) {
+        if ($user->id === $id) {
             return response()->json([
                 'success' => false,
                 'messages' => ["自分自身を削除することはできません。"]
             ], 403);
         }
-        $user->delete();
+        $targetUser = User::where('id', $id)->where('restaurant_id', $user->restaurantId);
+
+        $targetUser->delete();
         return response()->json([
             'success' => true,
             'messages' => ["ユーザーを削除しました。"]
