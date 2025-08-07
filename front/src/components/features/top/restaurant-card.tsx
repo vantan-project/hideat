@@ -33,7 +33,7 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
 
   return (
     <>
-      <div className="snap-center h-screen overflow-y-auto py-64 px-[calc((100vw-300px)*0.125)] flex justify-center [&::-webkit-scrollbar]:hidden">
+      <div className="snap-center h-screen overflow-y-auto py-40 px-[calc((100vw-300px)*0.125)] flex justify-center [&::-webkit-scrollbar]:hidden">
         <div className="w-[300px] h-fit rounded-2xl overflow-hidden shadow-lg shadow-black">
           {isLoading && (
             <>
