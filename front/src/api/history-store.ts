@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-export type HistoryStoreRequest = Array<{
+export type HistoryStoreRequest = {
   isGoogle: boolean;
   url: string;
   locationId: string;
-}>;
+};
 
 export type HistoryStoreResponse = {
     id: number;

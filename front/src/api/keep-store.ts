@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export type KeepStoreRequest = Array<{
+export type KeepStoreRequest = {
   isGoogle: boolean;
   url: string;
   locationId: string;
-}>;
+};
 
 export type KeepStoreResponse = {
   id: number;
