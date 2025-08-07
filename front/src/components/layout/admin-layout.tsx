@@ -40,10 +40,9 @@ export function AdminLayout({ children }: Props) {
         setRestaurantId,
       }}
     >
-
       {/* サイドナビバー */}
       {(!isLoginPage && !isSignUpPage) && (
-        <aside className="w-56 bg-primary flex flex-col items-center py-6 fixed top-0 left-0 h-screen z-30">
+        <aside className="w-56 bg-primary flex flex-col items-center py-6 fixed top-0 left-0 h-screen z-30 rounded-r-2xl">
           <LogoIcon className="w-40 h-auto text-white mb-9" />
           <nav className="w-full flex flex-col gap-0 mt-2">
             <Link href="/admin/restaurant" className="mx-2 border-white border-y">

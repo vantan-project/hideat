@@ -12,9 +12,17 @@ export default function UserPage() {
   const [users, setUsers] = useState<UserIndexResponse>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<{ id: number; name: string } | null>(null);
+  const [userToDelete, setUserToDelete] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", email: "", password: "", passwordConfirm: "" });
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+  });
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -47,7 +55,7 @@ export default function UserPage() {
     try {
       const result = await userDestroy(userToDelete.id);
       if (result.success) {
-        setUsers(users.filter(user => user.id !== userToDelete.id));
+        setUsers(users.filter((user) => user.id !== userToDelete.id));
         addToast({
           title: "ユーザーを削除しました",
           color: "success",
@@ -84,7 +92,12 @@ export default function UserPage() {
 
   const handleAddConfirm = async () => {
     if (isProcessing) return;
-    if (!newUser.name || !newUser.email || !newUser.password || !newUser.passwordConfirm) {
+    if (
+      !newUser.name ||
+      !newUser.email ||
+      !newUser.password ||
+      !newUser.passwordConfirm
+    ) {
       addToast({
         title: "ユーザー名、メールアドレス、パスワードを入力してください",
         color: "danger",
@@ -107,7 +120,7 @@ export default function UserPage() {
         email: newUser.email,
         password: newUser.password,
       });
-      
+
       if (result.success) {
         await fetchUsers(); // Refresh the user list
         addToast({
@@ -161,7 +174,7 @@ export default function UserPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">ユーザーリスト</h1>
-      
+
       <div className="grid grid-cols-3 gap-4">
         {/* Add New User Card */}
         <div
@@ -181,7 +194,7 @@ export default function UserPage() {
               <h3 className="font-medium text-gray-900">{user.name}</h3>
               <p className="text-sm text-gray-600">{user.email}</p>
             </div>
-            
+
             <button
               onClick={() => handleDeleteClick(user)}
               className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-red-500 hover:bg-red-600 text-white rounded-md w-10 h-10 flex items-center justify-center transition-colors shadow"
@@ -195,7 +208,7 @@ export default function UserPage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && userToDelete && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 backdrop-blur-sm"
           onClick={handleBackgroundClick}
         >
@@ -238,7 +251,7 @@ export default function UserPage() {
 
       {/* Add User Modal */}
       {showAddModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 backdrop-blur-sm"
           onClick={handleBackgroundClick}
         >
@@ -257,23 +270,31 @@ export default function UserPage() {
                   type="text"
                   label="ユーザー名"
                   value={newUser.name}
-                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, name: e.target.value })
+                  }
                 />
                 <Input
                   type="email"
                   label="メールアドレス"
                   value={newUser.email}
-                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, email: e.target.value })
+                  }
                 />
                 <PasswordInput
                   label="パスワード"
                   value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                  }
                 />
                 <PasswordInput
                   label="パスワード（確認）"
                   value={newUser.passwordConfirm}
-                  onChange={(e) => setNewUser({ ...newUser, passwordConfirm: e.target.value })}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, passwordConfirm: e.target.value })
+                  }
                 />
               </div>
               <div className="flex gap-4 justify-center">
