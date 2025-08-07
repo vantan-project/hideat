@@ -200,32 +200,38 @@ export default function UserPage() {
           onClick={handleBackgroundClick}
         >
           <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative border border-blue-300">
-            
-            <div className="text-center mb-6">
-              <p className="text-gray-900 text-lg">
-                {userToDelete.name}を削除しますか？
-              </p>
-            </div>
-            
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={handleDeleteConfirm}
-                className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center min-w-[80px]"
-                disabled={isProcessing}
-              >
-                {isProcessing ? (
-                  <Spinner size="sm" color="white" className="mr-2" />
-                ) : null}
-                削除
-              </button>
-              <button
-                onClick={handleDeleteCancel}
-                className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors"
-                disabled={isProcessing}
-              >
-                戻る
-              </button>
-            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleDeleteConfirm();
+              }}
+            >
+              <div className="text-center mb-6">
+                <p className="text-gray-900 text-lg">
+                  {userToDelete.name}を削除しますか？
+                </p>
+              </div>
+              <div className="flex gap-4 justify-center">
+                <button
+                  type="submit"
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center min-w-[80px]"
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <Spinner size="sm" color="white" className="mr-2" />
+                  ) : null}
+                  削除
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteCancel}
+                  className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                  disabled={isProcessing}
+                >
+                  戻る
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -237,54 +243,60 @@ export default function UserPage() {
           onClick={handleBackgroundClick}
         >
           <div className="bg-white rounded-lg p-6 w-1/3 mx-4 shadow-lg">
-            <div className="text-center mb-6">
-              <h2 className="text-xl font-bold text-gray-900">新規追加</h2>
-            </div>
-            
-            <div className="space-y-4 mb-6">
-              <Input
-                type="text"
-                label="ユーザー名"
-                value={newUser.name}
-                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-              />
-              <Input
-                type="email"
-                label="メールアドレス"
-                value={newUser.email}
-                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-              />
-              <PasswordInput
-                label="パスワード"
-                value={newUser.password}
-                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-              />
-              <PasswordInput
-                label="パスワード（確認）"
-                value={newUser.passwordConfirm}
-                onChange={(e) => setNewUser({ ...newUser, passwordConfirm: e.target.value })}
-              />
-            </div>
-            
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={handleAddConfirm}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center min-w-[80px]"
-                disabled={isProcessing}
-              >
-                {isProcessing ? (
-                  <Spinner size="sm" color="white" className="mr-2" />
-                ) : null}
-                追加
-              </button>
-              <button
-                onClick={handleAddCancel}
-                className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors"
-                disabled={isProcessing}
-              >
-                戻る
-              </button>
-            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddConfirm();
+              }}
+            >
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900">新規追加</h2>
+              </div>
+              <div className="space-y-4 mb-6">
+                <Input
+                  type="text"
+                  label="ユーザー名"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                />
+                <Input
+                  type="email"
+                  label="メールアドレス"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                />
+                <PasswordInput
+                  label="パスワード"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                />
+                <PasswordInput
+                  label="パスワード（確認）"
+                  value={newUser.passwordConfirm}
+                  onChange={(e) => setNewUser({ ...newUser, passwordConfirm: e.target.value })}
+                />
+              </div>
+              <div className="flex gap-4 justify-center">
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center min-w-[80px]"
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <Spinner size="sm" color="white" className="mr-2" />
+                  ) : null}
+                  追加
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddCancel}
+                  className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                  disabled={isProcessing}
+                >
+                  戻る
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
