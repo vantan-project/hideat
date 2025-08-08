@@ -31,7 +31,7 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('image')->group(function () {
-    // Route::get('/', [ImageController::class, 'index']);
+    Route::get('/', [ImageController::class, 'index']);
 });
 
 Route::prefix('category')->group(function () {
@@ -41,6 +41,7 @@ Route::prefix('category')->group(function () {
 Route::prefix('history')->group(function () {
     Route::post('/', [HistoryController::class, 'store']);
     Route::get('/', [HistoryController::class, 'index']);
+    Route::patch('/keep/{id}', [HistoryController::class, 'keep']);
 });
 
 Route::prefix('keep')->group(function () {

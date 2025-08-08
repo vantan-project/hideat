@@ -4,36 +4,32 @@ import { useState, useEffect } from "react";
 import KeepCardGrid from "@/components/keep/keep-card-grid";
 import KeepActionButtons from "@/components/keep/keep-action-buttons";
 import Cookies from "js-cookie";
-import { Keep } from "@/type/keep";
+import {
+  keepIndex,
+  KeepIndexResponse,
+} from "@/api/keep-index";
 
 export default function KeepPage() {
-  const [keptRestaurants, setKeptRestaurants] = useState<Keep[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [isAllSelected, setIsAllSelected] = useState(false);
-  const [keep, setKeep] = useState<Keep[]>([]);
+  const [keepIds, setKeepIds] = useState<number[]>([]);
+  const [keeps, setKeeps] = useState<KeepIndexResponse>([]);
 
   // データ取得
   useEffect(() => {
     const fetchKeepData = () => {
       try {
         setIsLoading(true);
-        setError(null);
-        
-        const keep = Cookies.get("keep");
-        if (keep) {
-          const parsedKeep = JSON.parse(keep);
-          setKeep(parsedKeep);
-          setKeptRestaurants(parsedKeep);
-        } else {
-          // keep Cookieが存在しない場合は空配列を設定
-          setKeptRestaurants([]);
+
+        const keepIds = Cookies.get("keep");
+        if (keepIds) {
+          const parsedKeep = JSON.parse(keepIds);
+          setKeepIds(parsedKeep);
         }
       } catch (err) {
-        setError("データの取得中にエラーが発生しました");
         console.error("Keep data fetch error:", err);
       } finally {
         setIsLoading(false);
@@ -43,6 +39,15 @@ export default function KeepPage() {
     fetchKeepData();
   }, []);
 
+  useEffect(() => {
+    const indexApi = async () => {
+      const res = await keepIndex({ ids: keepIds });
+      if (res) setKeeps(res);
+    };
+
+    indexApi();
+  }, [keepIds]);
+
   const toggleSelectionMode = () => {
     // 選択削除モードは移行のみ（キャンセルはキャンセルボタンのみ）
     setIsSelectionMode(true);
@@ -50,7 +55,7 @@ export default function KeepPage() {
   };
 
   const selectAll = () => {
-    const allIds = keptRestaurants.map(item => item.id);
+    const allIds = keeps.map((item) => item.id);
     setSelectedItems(allIds);
     setIsSelectionMode(true);
     setIsAllSelected(true);
@@ -59,18 +64,21 @@ export default function KeepPage() {
   const selectItem = (id: number) => {
     console.log(`selectItem called with id: ${id}`);
     const isSelected = selectedItems.includes(id);
-    console.log(`isSelected: ${isSelected}, current selectedItems:`, selectedItems);
+    console.log(
+      `isSelected: ${isSelected}, current selectedItems:`,
+      selectedItems
+    );
 
     if (isSelected) {
       // 選択解除
-      const newSelectedItems = selectedItems.filter(itemId => itemId !== id);
+      const newSelectedItems = selectedItems.filter((itemId) => itemId !== id);
       setSelectedItems(newSelectedItems);
       console.log(`Removed item ${id}, new selectedItems:`, newSelectedItems);
 
       // 全選択状態を解除
       if (isAllSelected) {
         setIsAllSelected(false);
-        console.log('All selection state cleared');
+        console.log("All selection state cleared");
       }
     } else {
       // 選択追加
@@ -79,10 +87,10 @@ export default function KeepPage() {
       console.log(`Added item ${id}, new selectedItems:`, newSelectedItems);
 
       // すべて選択されたかチェック
-      const allIds = keptRestaurants.map(item => item.id);
+      const allIds = keeps.map((item) => item.id);
       if (newSelectedItems.length === allIds.length) {
         setIsAllSelected(true);
-        console.log('All items selected, setting isAllSelected to true');
+        console.log("All items selected, setting isAllSelected to true");
       }
     }
   };
@@ -94,16 +102,18 @@ export default function KeepPage() {
   };
 
   const deleteSelected = () => {
-    const updatedKeptRestaurants = keptRestaurants.filter(item => !selectedItems.includes(item.id));
+    const updatedKeptRestaurants = keeps.filter(
+      (item) => !selectedItems.includes(item.id)
+    ).map((item) => item.id);
     Cookies.set("keep", JSON.stringify(updatedKeptRestaurants));
-    setKeptRestaurants(updatedKeptRestaurants);
+    setKeepIds(updatedKeptRestaurants);
 
     setSelectedItems([]);
     setIsSelectionMode(false);
     setIsAllSelected(false);
   };
 
-  const showButtons = !isLoading && !error && keptRestaurants.length > 0;
+  const showButtons = !isLoading && keepIds.length > 0;
 
   return (
     <div className="pt-10 min-h-screen bg-gray-50">
@@ -124,9 +134,8 @@ export default function KeepPage() {
         />
 
         <KeepCardGrid
-          restaurants={keptRestaurants}
+          restaurants={keeps}
           isLoading={isLoading}
-          error={error}
           selectedItems={selectedItems}
           isSelectionMode={isSelectionMode}
           onSelect={selectItem}

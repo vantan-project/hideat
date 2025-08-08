@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('is_google');
+            $table->boolean('is_keeped')->default(false);
             $table->text('url');
             $table->string('location_id');
             $table->timestamps();

@@ -4,16 +4,16 @@ import { InstagramIcon } from "@/components/shared/icons/instagram-icon";
 import { LineIcon } from "@/components/shared/icons/line-icon";
 import { TikTokIcon } from "@/components/shared/icons/tiktok-icon";
 import { XIcon } from "@/components/shared/icons/x-icon";
-import {
-  Button,
-  Skeleton,
-  useDisclosure,
-} from "@heroui/react";
+import { addToast, Button, Skeleton, useDisclosure } from "@heroui/react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import clsx from "clsx";
 import { Pin } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Cookies from "js-cookie";
+import { keepStore } from "@/api/keep-store";
+import { historyStore } from "@/api/history-store";
+import { historyKeep } from "@/api/history-keep";
 
 type Props = {
   image?: ImageIndexResponse[number] | null;
@@ -22,6 +22,8 @@ type Props = {
 
 export function RestaurantCard({ image = null, isLoading = false }: Props) {
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+  const [isKeeped, setIsKeeped] = useState(false);
+  const [historyId, setHistoryId] = useState<number | null>(null);
 
   const contentPaddingClassName = "px-4";
 
@@ -30,6 +32,65 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
   });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const isCalled = useRef(false);
+
+  useEffect(() => {
+    const addHistoryApi = async () => {
+      if (isCalled.current || !image) return;
+
+      isCalled.current = true;
+
+      const res = await historyStore({
+        name: image.restaurant.name,
+        isGoogle: image.isGoogle,
+        url: image.url || "",
+        locationId: String(image.restaurant.id),
+      });
+
+      if (res.id && !historyId) {
+        setHistoryId(res.id)
+        const historyCookies = Cookies.get("history");
+        const historyArray: (number | string)[] = historyCookies
+          ? JSON.parse(historyCookies)
+          : [];
+
+        if (res.id) historyArray.push(res.id);
+
+        Cookies.set("history", JSON.stringify(historyArray));
+      };
+    };
+
+    addHistoryApi();
+  }, [image, historyId]);
+
+  const addKeep = async () => {
+    if (!image || isKeeped) return;
+    setIsKeeped(true);
+    const res = await keepStore({
+      name: image.restaurant.name,
+      isGoogle: image.isGoogle,
+      url: image.url || "",
+      locationId: String(image.restaurant.id),
+      latitude: image.restaurant.latitude,
+      longitude: image.restaurant.longitude,
+    });
+
+    const keepCookies = Cookies.get("keep");
+    const keepArray: (number | string)[] = keepCookies
+      ? JSON.parse(keepCookies)
+      : [];
+
+    if (res.id) keepArray.push(res.id);
+
+    Cookies.set("keep", JSON.stringify(keepArray));
+    addToast({
+      title: "キープに追加しました！",
+      color: "success",
+    });
+
+    if (historyId) await historyKeep(historyId);
+  };
 
   return (
     <>
@@ -68,8 +129,10 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
                 <Button
                   className="w-full bg-primary text-white font-bold py-6"
                   startContent={<Pin />}
+                  onPress={() => addKeep()}
+                  isDisabled={isKeeped}
                 >
-                  キープに追加
+                  {isKeeped ? "キープ済み" : "キープに追加"}
                 </Button>
               </div>
 

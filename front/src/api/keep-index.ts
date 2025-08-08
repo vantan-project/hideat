@@ -17,7 +17,7 @@ export type KeepIndexResponse = Array<{
 export async function keepIndex(
   req: KeepIndexRequest
 ): Promise<KeepIndexResponse> {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/keep/index`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/keep`;
 
   return axios
     .get<KeepIndexResponse>(apiUrl, { params: req })

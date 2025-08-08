@@ -43,4 +43,12 @@ class HistoryController extends Controller
 
         return response()->json($sorted);
     }
+
+    public function keep($id)
+    {
+        $history = History::findOrFail($id);
+
+        $history->is_keeped = true;
+        $history->save();
+    }
 }
