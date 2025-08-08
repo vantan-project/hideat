@@ -15,8 +15,10 @@ export function AdminLayout({ children }: Props) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [restaurantId, setRestaurantId] = useState<number | null>(null);
   const pathname = usePathname();
-  const isLoginPage = pathname == "/admin/login";
-  const isSignUpPage = pathname == "/admin/sign-up";
+  const isAdminPage = pathname.startsWith("/admin");
+  const showSideBer = isAdminPage
+    ? pathname !== "/admin/login" && pathname !== "/admin/sign-up"
+    : true;
 
   useEffect(() => {
     const tokenApi = async () => {
@@ -41,11 +43,14 @@ export function AdminLayout({ children }: Props) {
       }}
     >
       {/* サイドナビバー */}
-      {(!isLoginPage && !isSignUpPage) && (
+      {showSideBer && (
         <aside className="w-56 bg-primary flex flex-col items-center py-6 fixed top-0 left-0 h-screen z-30 rounded-r-2xl">
           <LogoIcon className="w-40 h-auto text-white mb-9" />
           <nav className="w-full flex flex-col gap-0 mt-2">
-            <Link href="/admin/restaurant" className="mx-2 border-white border-y">
+            <Link
+              href="/admin/restaurant"
+              className="mx-2 border-white border-y"
+            >
               <div className="w-full text-center py-5.5 text-white font-bold text-base bg-transparent hover:opacity-50 transition cursor-pointer">
                 店舗情報
               </div>
@@ -58,9 +63,7 @@ export function AdminLayout({ children }: Props) {
           </nav>
         </aside>
       )}
-      <div className={!isLoggedIn && !isSignUpPage ? "" : "pl-56"}>
-        {children}
-      </div>
+      <div className={showSideBer ? "pl-56" : ""}>{children}</div>
     </GlobalContext.Provider>
   );
 }

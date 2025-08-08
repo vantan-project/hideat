@@ -17,19 +17,17 @@ export function MainLayout({ children }: Props) {
   const isKeepPage = pathname === "/keep";
   const isHistoryPage = pathname === "/history";
 
-  const showHeader = isAdminPage
-    ? pathname === "/admin/login" || pathname === "/admin/sign-up"
-    : true;
+  const showHeader = !isAdminPage
 
   return (
     <HeroUIProvider>
       <ToastProvider placement="top-right" />
       {showHeader && (
         <>
-          <div className="h-20 w-full fixed z-30 rounded-b-2xl shadow-2xl bg-primary flex items-center pl-4">
-            <LogoIcon className="w-32 h-auto text-white" />
+          <div className="h-16 w-full fixed z-30 rounded-b-2xl shadow-2xl bg-primary flex items-center pl-4">
+            <LogoIcon className="w-24 h-auto text-white" />
           </div>
-          <div className="h-20" />
+          <div className="h-16" />
         </>
       )}
       {children}

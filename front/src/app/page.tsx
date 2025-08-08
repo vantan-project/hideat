@@ -69,9 +69,9 @@ export default function () {
         </Button>
         <div className="grid grid-cols-[2fr_1fr] gap-2 pt-2">
           <CategorySelect
-            selectedCategoryId={search.categoryId}
-            setSelectedCategoryId={(ids) => {
-              setSearch({ ...search, categoryId: ids });
+            selectedCategoryIds={search.categoryId ? [search.categoryId] : []}
+            setSelectedCategoryIds={(ids) => {
+              setSearch({ ...search, categoryId: ids[0] || null });
             }}
           />
           <Select

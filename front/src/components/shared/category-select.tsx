@@ -1,15 +1,25 @@
 import { categoryIndex } from "@/api/category-index";
-import { Drawer, DrawerContent, Input, useDisclosure } from "@heroui/react";
+import {
+  Drawer,
+  DrawerContent,
+  Input,
+  InputProps,
+  useDisclosure,
+} from "@heroui/react";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 
 type Props = {
-  selectedCategoryId: number | null;
-  setSelectedCategoryId: (ids: number | null) => void;
-};
+  selectedCategoryIds: Array<number>;
+  setSelectedCategoryIds: (ids: Array<number>) => void;
+  isMulti?: boolean;
+} & InputProps;
 
 export function CategorySelect({
-  selectedCategoryId,
-  setSelectedCategoryId,
+  selectedCategoryIds = [],
+  setSelectedCategoryIds,
+  isMulti = false,
+  classNames,
 }: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [categories, setCategories] = useState<
@@ -29,6 +39,9 @@ export function CategorySelect({
     indexApi();
   }, []);
 
+  const isSelect = (categoryKey: string) =>
+    selectedCategoryIds.includes(Number(categoryKey));
+
   return (
     <>
       <Drawer isOpen={isOpen} onOpenChange={onOpenChange} placement="bottom">
@@ -36,10 +49,29 @@ export function CategorySelect({
           <div className="p-4 flex flex-wrap gap-4">
             {categories.map((category) => (
               <button
-                className="py-2 px-12 border border-black rounded-2xl"
+                className={clsx(
+                  isSelect(category.key)
+                    ? "bg-black text-white"
+                    : "border-black",
+                  "py-2 px-12 border rounded-2xl"
+                )}
                 onClick={() => {
-                  setSelectedCategoryId(Number(category.key));
-                  onOpenChange();
+                  !isMulti && onOpenChange();
+
+                  if (isSelect(category.key)) {
+                    setSelectedCategoryIds(
+                      selectedCategoryIds.filter(
+                        (id) => id !== Number(category.key)
+                      )
+                    );
+                    return;
+                  }
+
+                  setSelectedCategoryIds(
+                    isMulti
+                      ? [...selectedCategoryIds, Number(category.key)]
+                      : [Number(category.key)]
+                  );
                 }}
               >
                 {category.label}
@@ -52,11 +84,14 @@ export function CategorySelect({
         label="カテゴリー"
         onClick={() => onOpen()}
         readOnly
-        value={
-          categories.find((c) => c.key === String(selectedCategoryId))?.label ||
-          ""
-        }
+        value={categories
+          .filter((category) =>
+            selectedCategoryIds.includes(Number(category.key))
+          )
+          .map((category) => category.label)
+          .join(", ")}
         size="sm"
+        classNames={classNames}
       />
     </>
   );
