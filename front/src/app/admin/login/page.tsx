@@ -11,7 +11,7 @@ import {
   CardHeader,
   Input,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Cookies from "js-cookie";

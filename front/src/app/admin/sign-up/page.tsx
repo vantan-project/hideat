@@ -1,17 +1,20 @@
 "use client";
 
-import { AuthSignUpRequest } from "@/api/auth-sign-up";
+import { authSignUp, AuthSignUpRequest } from "@/api/auth-sign-up";
 import { ImageForm } from "@/components/features/sign-up/image-form";
 import { RestaurantForm } from "@/components/features/sign-up/restaurant-form";
 import { SignUpFormProps } from "@/components/features/sign-up/sign-up-form";
 import { SnsForm } from "@/components/features/sign-up/sns-form";
 import { UserForm } from "@/components/features/sign-up/user-form";
-import { Button } from "@heroui/react";
+import { addToast, Button } from "@heroui/react";
 import clsx from "clsx";
 import { ArrowLeft, Image, Link, User, Utensils } from "lucide-react";
 import { useState } from "react";
 import NextLink from "next/link";
 import { LogoIcon } from "@/components/shared/icons/logo-icon";
+import { useGlobalContext } from "@/hooks/use-global-context";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 type Flow = {
   key: number;
@@ -40,6 +43,8 @@ const inputClassNames = {
 };
 
 export default function () {
+  const router = useRouter();
+  const { setRestaurantId, setIsLoggedIn } = useGlobalContext();
   const [currentKey, setCurrentKey] = useState(1);
   const [currentFlow, setCurrentFlow] = useState<Flow>(flows[0]);
 
@@ -63,6 +68,23 @@ export default function () {
       categoryIds: [],
     },
   });
+
+  const signUpApi = async () => {
+    const res = await authSignUp(formData);
+    res.messages.forEach((message) => {
+      addToast({
+        title: message,
+        color: res.success ? "success" : "danger",
+      });
+    });
+
+    if (res.success) {
+      setIsLoggedIn(true);
+      setRestaurantId(res.restaurantId);
+      Cookies.set("authToken", res.authToken);
+      router.push("/admin/restaurant");
+    }
+  };
 
   if (!currentFlow) return;
 
@@ -134,6 +156,7 @@ export default function () {
                 radius="full"
                 fullWidth
                 className="mt-5 bg-primary text-white"
+                onPress={() => signUpApi()}
               >
                 サインアップ
               </Button>

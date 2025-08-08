@@ -28,8 +28,8 @@ export type AuthSignUpResponse =
   | {
       success: true;
       messages: Array<string>;
-      authToken?: string;
-      restaurantId?: number;
+      authToken: string;
+      restaurantId: number;
     }
   | {
       success: false;
@@ -41,8 +41,14 @@ export async function authSignUp(
 ): Promise<AuthSignUpResponse> {
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-up`;
 
+  console.log(req.restaurant.imageFiles);
+
   return axios
-    .post<AuthSignUpResponse>(apiUrl, req)
+    .post<AuthSignUpResponse>(apiUrl, req, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
     .then((res) => res.data)
     .catch((err) => {
       console.warn(err);
