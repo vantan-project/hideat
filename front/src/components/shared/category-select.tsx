@@ -19,7 +19,7 @@ export function CategorySelect({
   selectedCategoryIds = [],
   setSelectedCategoryIds,
   isMulti = false,
-  classNames,
+  ...props
 }: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [categories, setCategories] = useState<
@@ -92,7 +92,7 @@ export function CategorySelect({
           .map((category) => category.label)
           .join(", ")}
         size="sm"
-        classNames={classNames}
+        {...props}
       />
     </>
   );

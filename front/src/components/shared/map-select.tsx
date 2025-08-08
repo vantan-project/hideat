@@ -23,7 +23,6 @@ export function MapSelect({
     lng: number;
   }>();
 
-  // useRefの型をgoogle.maps.places.SearchBoxに変更
   const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
 
   const { isLoaded } = useJsApiLoader({

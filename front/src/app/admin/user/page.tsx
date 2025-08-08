@@ -163,23 +163,17 @@ export default function UserPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-lg">読み込み中...</div>
-      </div>
-    );
-  }
+  if (loading) return;
 
   return (
-    <div className="p-6">
+    <div className="p-6 h-screen">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">ユーザーリスト</h1>
 
       <div className="grid grid-cols-3 gap-4">
         {/* Add New User Card */}
         <div
           onClick={handleAddUser}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
+          className="border-2 border-dashed rounded-lg p-6 flex items-center justify-center cursor-pointer border-gray-400 hover:border-gray-600 transition-colors"
         >
           <span className="text-gray-600 font-medium">新規追加</span>
         </div>

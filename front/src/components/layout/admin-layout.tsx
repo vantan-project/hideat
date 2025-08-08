@@ -31,7 +31,11 @@ export function AdminLayout({ children }: Props) {
     };
 
     tokenApi();
-  });
+  }, []);
+
+  useEffect(() => {
+    document.body.style.backgroundColor = "var(--color-gray)";
+  }, []);
 
   return (
     <GlobalContext.Provider

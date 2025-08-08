@@ -7,6 +7,8 @@ export type RestaurantShowRequest = {
 export type RestaurantShowResponse = {
   name: string;
   mapUrl: string;
+  latitude: number;
+  longitude: number;
   instagramUrl: string;
   tiktokUrl: string;
   xUrl: string;
@@ -15,9 +17,8 @@ export type RestaurantShowResponse = {
   tabelogUrl: string;
   gnaviUrl: string;
 
-  categoryIds: Array<number>;
-
   imageUrls: Array<string>;
+  categoryIds: Array<number>;
 };
 
 export async function restaurantShow(id: number, req: RestaurantShowRequest) {

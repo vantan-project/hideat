@@ -62,10 +62,6 @@ export default function LoginPage() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "var(--color-gray)";
-  }, []);
-
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
       <div className="w-full max-w-[404px] space-y-4">

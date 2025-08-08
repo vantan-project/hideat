@@ -71,11 +71,6 @@ export default function () {
     },
   });
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "var(--color-gray)";
-    setIsLoading(false);
-  }, []);
-
   if (isLoading || !currentFlow) return;
 
   return (
