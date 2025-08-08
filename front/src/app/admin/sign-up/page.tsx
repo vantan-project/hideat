@@ -8,9 +8,8 @@ import { SnsForm } from "@/components/features/sign-up/sns-form";
 import { UserForm } from "@/components/features/sign-up/user-form";
 import { Button } from "@heroui/react";
 import clsx from "clsx";
-import { CircleArrowLeft, Image, Link, User, Utensils } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ArrowLeft, Image, Link, User, Utensils } from "lucide-react";
+import { useState } from "react";
 import NextLink from "next/link";
 import { LogoIcon } from "@/components/shared/icons/logo-icon";
 
@@ -41,14 +40,8 @@ const inputClassNames = {
 };
 
 export default function () {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const [isLoading, setIsLoading] = useState(true);
   const [currentKey, setCurrentKey] = useState(1);
   const [currentFlow, setCurrentFlow] = useState<Flow>(flows[0]);
-  const params = new URLSearchParams(searchParams);
 
   const [formData, setFormData] = useState<AuthSignUpRequest>({
     user: {
@@ -71,7 +64,7 @@ export default function () {
     },
   });
 
-  if (isLoading || !currentFlow) return;
+  if (!currentFlow) return;
 
   return (
     <div className="h-screen flex flex-col items-center justify-center">
@@ -102,19 +95,21 @@ export default function () {
           </div>
         ))}
       </div>
-      <button
-        className="fixed top-1/2 left-56 bg-white rounded-full"
-        onClick={() => {
-          if (currentKey === 1) return;
-          const nextFlow = flows.find((flow) => flow.key === currentKey - 1);
-          if (nextFlow) {
-            setCurrentFlow(nextFlow);
-            setCurrentKey(currentKey - 1);
-          }
-        }}
-      >
-        <CircleArrowLeft className="w-12 h-12" />
-      </button>
+      {currentKey !== 1 && (
+        <button
+          className="fixed top-1/2 left-56 border p-4 bg-white rounded-full flex justify-center items-center"
+          onClick={() => {
+            if (currentKey === 1) return;
+            const nextFlow = flows.find((flow) => flow.key === currentKey - 1);
+            if (nextFlow) {
+              setCurrentFlow(nextFlow);
+              setCurrentKey(currentKey - 1);
+            }
+          }}
+        >
+          <ArrowLeft className="w-8 h-8" />
+        </button>
+      )}
       <form className="relative grid grid-cols-[3fr_5fr] w-[800px] h-[500px] overflow-hidden rounded-2xl bg-white">
         <div className="absolute top-0 w-[300px] h-full bg-primary flex flex-col items-center justify-center gap-2 text-white font-bold">
           <LogoIcon className="w-32 mb-32" />
