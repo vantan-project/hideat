@@ -128,7 +128,7 @@ export default function LoginPage() {
             href="/admin/sign-up"
             className="text-sm font-bold hover:text-red-800 underline"
           >
-            アカウントをお持ちの方はコチラ
+            新規登録はコチラ
           </Link>
         </div>
       </div>
