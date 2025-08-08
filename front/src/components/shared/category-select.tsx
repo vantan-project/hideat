@@ -49,6 +49,7 @@ export function CategorySelect({
           <div className="p-4 flex flex-wrap gap-4">
             {categories.map((category) => (
               <button
+                key={category.key}
                 className={clsx(
                   isSelect(category.key)
                     ? "bg-black text-white"
