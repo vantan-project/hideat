@@ -116,7 +116,7 @@ export default function KeepPage() {
   const showButtons = !isLoading && keepIds.length > 0;
 
   return (
-    <div className="pt-10 min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="bg-white px-4 py-6">
         <p className="text-sm text-gray-600 mb-6">
           ※キープ一覧に追加したカードは1日で削除されます。
