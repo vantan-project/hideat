@@ -8,6 +8,7 @@ export type HistoryIndexResponse = Array<{
   id: number;
   name: string;
   isGoogle: boolean;
+  isKeeped: boolean;
   url: string;
   locationId: string;
 }>;
@@ -15,7 +16,7 @@ export type HistoryIndexResponse = Array<{
 export async function historyIndex(
   req: HistoryIndexRequest
 ): Promise<HistoryIndexResponse> {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/history/index`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/history`;
 
   return axios
     .get<HistoryIndexResponse>(apiUrl, { params: req })

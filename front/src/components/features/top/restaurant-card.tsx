@@ -55,7 +55,7 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
           ? JSON.parse(historyCookies)
           : [];
 
-        if (res.id) historyArray.push(res.id);
+        if (res.id) historyArray.unshift(res.id);
 
         Cookies.set("history", JSON.stringify(historyArray));
       };
@@ -81,7 +81,7 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
       ? JSON.parse(keepCookies)
       : [];
 
-    if (res.id) keepArray.push(res.id);
+    if (res.id) keepArray.unshift(res.id);
 
     Cookies.set("keep", JSON.stringify(keepArray));
     addToast({

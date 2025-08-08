@@ -34,7 +34,7 @@ export function AdminLayout({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    document.body.style.backgroundColor = "var(--color-gray)";
+    document.documentElement.style.backgroundColor = "var(--color-gray)";
   }, []);
 
   return (

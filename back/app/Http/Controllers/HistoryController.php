@@ -36,6 +36,7 @@ class HistoryController extends Controller
                 'id' => $history->id,
                 'name' => $history->name,
                 'isGoogle' => $history->is_google,
+                'isKeeped' => $history->is_keeped,
                 'url' => $history->url,
                 'locationId' => $history->location_id,
             ];
