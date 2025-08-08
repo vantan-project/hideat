@@ -41,8 +41,6 @@ export async function authSignUp(
 ): Promise<AuthSignUpResponse> {
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-up`;
 
-  console.log(req.restaurant.imageFiles);
-
   return axios
     .post<AuthSignUpResponse>(apiUrl, req, {
       headers: {
