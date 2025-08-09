@@ -21,7 +21,7 @@ export type RestaurantShowResponse = {
   categoryIds: Array<number>;
 };
 
-export async function restaurantShow(id: number, req: RestaurantShowRequest) {
+export async function restaurantShow(id: string, req: RestaurantShowRequest) {
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/restaurant/${id}`;
 
   return axios

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Restaurant;
-use App\Services\GoogleService; 
+use App\Services\GoogleService;
 use Illuminate\Http\Request;
 
 class RestaurantController extends Controller
 {
     public function show(Request $request, $id) {
-        
+
         if ($request->boolean('isGoogle')) {
             $googleService = new GoogleService();
             $restaurant = $googleService->getPlaceDetails($id);

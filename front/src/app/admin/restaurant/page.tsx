@@ -45,7 +45,7 @@ export default function () {
   useEffect(() => {
     if (!restaurantId) return;
     const showApi = async () => {
-      const res = await restaurantShow(restaurantId, {
+      const res = await restaurantShow(String(restaurantId), {
         isGoogle: false,
       });
       setRestaurant(res);

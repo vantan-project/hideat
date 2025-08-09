@@ -104,7 +104,9 @@ class GoogleService
         return [
             'id' => $placeData['id'],
             'name' => $placeData['displayName']['text'],
-            'photos' => $placeData['photos'],
+            'photos' => collect($placeData['photos'])->map(function($photo) {
+                return "https://places.googleapis.com/v1/{$photo['name']}/media?key={$this->apiKey}&maxWidthPx=400";
+            }),
             'latitude' => $placeData['location']['latitude'],
             'longitude' => $placeData['location']['longitude'],
         ];

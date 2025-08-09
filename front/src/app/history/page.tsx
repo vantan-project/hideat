@@ -5,7 +5,15 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Pin } from "lucide-react";
 import { Pagination } from "@heroui/react";
-import clsx from "clsx";
+import {
+  RestaurantCard,
+  RestaurantCardProps,
+} from "@/components/features/top/restaurant-card";
+import {
+  restaurantShow,
+  RestaurantShowRequest,
+  RestaurantShowResponse,
+} from "@/api/restaurant-show";
 
 export default function () {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,6 +21,8 @@ export default function () {
   const [histories, setHistories] = useState<HistoryIndexResponse>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedImage, setSelectedImage] =
+    useState<RestaurantCardProps | null>(null);
 
   useEffect(() => {
     document.documentElement.style.backgroundColor = "var(--color-gray)";
@@ -58,6 +68,35 @@ export default function () {
 
   if (isLoading) return;
 
+  const handleClick = async (history: HistoryIndexResponse[number]) => {
+    const res = await restaurantShow(String(history.locationId), {
+      isGoogle: history.isGoogle,
+    });
+    if (res) {
+      setSelectedImage({
+        image: {
+          url: history.url,
+          isGoogle: history.isGoogle,
+          restaurant: {
+            id: history.locationId,
+            name: res.name,
+            mapUrl: res.mapUrl,
+            latitude: res.latitude,
+            longitude: res.longitude,
+            instagramUrl: res.instagramUrl,
+            tiktokUrl: res.tiktokUrl,
+            xUrl: res.xUrl,
+            facebookUrl: res.facebookUrl,
+            lineUrl: res.lineUrl,
+            tabelogUrl: res.tabelogUrl,
+            gnaviUrl: res.gnaviUrl,
+            imageUrls: res.imageUrls,
+          },
+        },
+      });
+    }
+  };
+
   return (
     <>
       <div className="p-6 pb-36">
@@ -65,6 +104,9 @@ export default function () {
         <div className="flex flex-col gap-2">
           {histories.slice(start, end).map((history) => (
             <div
+              onClick={() => {
+                handleClick(history);
+              }}
               key={history.id}
               className="bg-white p-2 flex gap-2 items-center"
             >
@@ -82,13 +124,25 @@ export default function () {
       <Pagination
         className="fixed bottom-20 left-1/2 -translate-x-1/2"
         classNames={{
-          item: "bg-white",
+          item: "bg-white shadow-xl",
         }}
         page={1}
         total={total}
         onChange={(page) => setCurrentPage(page)}
         size="lg"
       />
+
+      {selectedImage && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/[0.5]"
+            onClick={() => setSelectedImage(null)}
+          />
+          <div className="absolute">
+            <RestaurantCard {...selectedImage} />
+          </div>
+        </div>
+      )}
     </>
   );
 }
