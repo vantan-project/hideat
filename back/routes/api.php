@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\KeepController;
 use Illuminate\Http\Request;
@@ -36,6 +37,10 @@ Route::prefix('image')->group(function () {
 
 Route::prefix('category')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
+});
+
+Route::prefix('restaurant')->group(function () {
+    Route::get('/{id}', [RestaurantController::class, 'show']);
 });
 
 Route::prefix('history')->group(function () {
