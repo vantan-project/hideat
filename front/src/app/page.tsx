@@ -58,7 +58,7 @@ export default function () {
   return (
     <div>
       <div
-        className={clsx(contentPaddingClassName, "fixed top-28 w-full z-30")}
+        className={clsx(contentPaddingClassName, "fixed top-24 w-full z-30")}
       >
         <Button
           onPress={() => indexApi()}

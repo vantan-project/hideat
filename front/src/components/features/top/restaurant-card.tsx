@@ -29,6 +29,7 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    language: "ja",
   });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -49,7 +50,7 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
       });
 
       if (res.id && !historyId) {
-        setHistoryId(res.id)
+        setHistoryId(res.id);
         const historyCookies = Cookies.get("history");
         const historyArray: (number | string)[] = historyCookies
           ? JSON.parse(historyCookies)
@@ -58,7 +59,7 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
         if (res.id) historyArray.unshift(res.id);
 
         Cookies.set("history", JSON.stringify(historyArray));
-      };
+      }
     };
 
     addHistoryApi();
@@ -187,12 +188,19 @@ export function RestaurantCard({ image = null, isLoading = false }: Props) {
 
                   {image.restaurant.xUrl && <XIcon className="w-4 h-4" />}
                 </div>
-                <Button className="w-full bg-gnavi z-20 text-white">
-                  ぐるナビ
-                </Button>
-                <Button type="button" className="w-full bg-tabelog text-white">
-                  食べログ
-                </Button>
+                {image.restaurant.gnaviUrl && (
+                  <Button className="w-full bg-gnavi z-20 text-white">
+                    ぐるナビ
+                  </Button>
+                )}
+                {image.restaurant.gnaviUrl && (
+                  <Button
+                    type="button"
+                    className="w-full bg-tabelog text-white"
+                  >
+                    食べログ
+                  </Button>
+                )}
               </div>
 
               <div className="bg-primary rounded-t-2xl text-white mt-20">

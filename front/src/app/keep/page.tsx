@@ -4,10 +4,7 @@ import { useState, useEffect } from "react";
 import KeepCardGrid from "@/components/keep/keep-card-grid";
 import KeepActionButtons from "@/components/keep/keep-action-buttons";
 import Cookies from "js-cookie";
-import {
-  keepIndex,
-  KeepIndexResponse,
-} from "@/api/keep-index";
+import { keepIndex, KeepIndexResponse } from "@/api/keep-index";
 
 export default function KeepPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +40,20 @@ export default function KeepPage() {
     const indexApi = async () => {
       const res = await keepIndex({ ids: keepIds });
       if (res) setKeeps(res);
+    };
+
+    indexApi();
+  }, [keepIds]);
+
+  useEffect(() => {
+    if (keepIds.length === 0) return;
+    const indexApi = async () => {
+      try {
+        const res = await keepIndex({ ids: keepIds });
+        if (res) setKeeps(res);
+      } catch (err) {
+        console.error("History index fetch error:", err);
+      }
     };
 
     indexApi();
@@ -102,9 +113,9 @@ export default function KeepPage() {
   };
 
   const deleteSelected = () => {
-    const updatedKeptRestaurants = keeps.filter(
-      (item) => !selectedItems.includes(item.id)
-    ).map((item) => item.id);
+    const updatedKeptRestaurants = keeps
+      .filter((item) => !selectedItems.includes(item.id))
+      .map((item) => item.id);
     Cookies.set("keep", JSON.stringify(updatedKeptRestaurants));
     setKeepIds(updatedKeptRestaurants);
 
@@ -117,7 +128,7 @@ export default function KeepPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white px-4 py-6">
+      <div className="bg-white px-4 pt-20 pb-6">
         <p className="text-sm text-gray-600 mb-6">
           ※キープ一覧に追加したカードは1日で削除されます。
         </p>

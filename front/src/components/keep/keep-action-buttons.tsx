@@ -20,7 +20,7 @@ export default function KeepActionButtons({
   onSelectAll,
   onCancelSelection,
   onDeleteSelected,
-  showButtons
+  showButtons,
 }: KeepActionButtonsProps) {
   if (!showButtons) {
     return null;
@@ -29,22 +29,25 @@ export default function KeepActionButtons({
   return (
     <>
       {/* モード切替 & 全選択 */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-3 mb-6 fixed top-20 left-0 w-full px-4 z-30">
         <Button
           variant="bordered"
-          className="flex-1 font-bold border-gray-300 text-gray-700"
+          className="flex-1 font-bold border-gray-300 text-gray-700 bg-white"
+          isDisabled={isSelectionMode}
           startContent={<MousePointer className="w-4 h-4" />}
-          onClick={onToggleSelectionMode}
+          onPress={onToggleSelectionMode}
         >
           選択削除モード
         </Button>
         <Button
           color="danger"
-          className={`flex-1 font-bold ${isAllSelected ? 'bg-green-500 text-white' : ''}`}
+          className={`flex-1 font-bold ${
+            isAllSelected ? "bg-green-500 text-white" : ""
+          }`}
           startContent={<Trash2 className="w-4 h-4" />}
-          onClick={onSelectAll}
+          onPress={onSelectAll}
         >
-          {isAllSelected ? '全選択済み' : '全選択'}
+          {isAllSelected ? "全選択済み" : "全選択"}
         </Button>
       </div>
 
@@ -56,15 +59,17 @@ export default function KeepActionButtons({
               variant="bordered"
               className="flex-1 border-red-500 text-red-500 bg-white font-bold"
               startContent={<X className="w-4 h-4" />}
-              onClick={onCancelSelection}
+              onPress={onCancelSelection}
             >
               キャンセル
             </Button>
             <Button
               color="danger"
-              className={`flex-1 font-bold ${selectedItems.length === 0 ? 'opacity-50' : ''}`}
+              className={`flex-1 font-bold ${
+                selectedItems.length === 0 ? "opacity-50" : ""
+              }`}
               startContent={<Trash2 className="w-4 h-4" />}
-              onClick={onDeleteSelected}
+              onPress={onDeleteSelected}
               disabled={selectedItems.length === 0}
             >
               削除 ({selectedItems.length})
@@ -74,4 +79,4 @@ export default function KeepActionButtons({
       )}
     </>
   );
-} 
+}

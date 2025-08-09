@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Pin } from "lucide-react";
 import { Pagination } from "@heroui/react";
+import clsx from "clsx";
 
 export default function () {
   const [isLoading, setIsLoading] = useState(true);
@@ -22,9 +23,9 @@ export default function () {
       try {
         setIsLoading(true);
 
-        const historyIds = Cookies.get("history");
-        if (historyIds) {
-          const parsedHistory = JSON.parse(historyIds);
+        const historyCookies = Cookies.get("history");
+        if (historyCookies) {
+          const parsedHistory = JSON.parse(historyCookies);
           setHistoryIds(parsedHistory);
         }
       } catch (err) {
@@ -38,22 +39,29 @@ export default function () {
   }, []);
 
   useEffect(() => {
+    if (historyIds.length === 0) return;
     const indexApi = async () => {
-      const res = await historyIndex({ ids: historyIds });
-      if (res) setHistories(res);
+      try {
+        const res = await historyIndex({ ids: historyIds });
+        if (res) setHistories(res);
+      } catch (err) {
+        console.error("History index fetch error:", err);
+      }
     };
 
     indexApi();
   }, [historyIds]);
 
-  const start = (currentPage - 1) * 30;
-  const end = start + 30;
-  const total = Math.ceil(histories.length / 30) || 1;
+  const start = (currentPage - 1) * 20;
+  const end = start + 20;
+  const total = Math.ceil(histories.length / 20) || 1;
+
+  if (isLoading) return;
 
   return (
     <>
       <div className="p-6 pb-36">
-        <h2 className="pb-2 font-bold">閲覧履歴</h2>
+        <h2 className="pb-2 pl-2 font-bold">閲覧履歴</h2>
         <div className="flex flex-col gap-2">
           {histories.slice(start, end).map((history) => (
             <div
@@ -61,7 +69,9 @@ export default function () {
               className="bg-white p-2 flex gap-2 items-center"
             >
               <Pin
-                className={history.isKeeped ? "text-primary" : "text-black"}
+                className={`flex-shrink-0 ${
+                  history.isKeeped ? "text-primary" : "text-black"
+                }`}
               />
               <p className="flex flex-wrap">{history.name}</p>
             </div>
