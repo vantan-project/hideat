@@ -4,7 +4,7 @@ import { historyIndex, HistoryIndexResponse } from "@/api/history-index";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Pin } from "lucide-react";
-import { Pagination } from "@heroui/react";
+import { Pagination, Skeleton } from "@heroui/react";
 import {
   RestaurantCard,
   RestaurantCardProps,
@@ -48,25 +48,26 @@ export default function () {
     fetchHistoryData();
   }, []);
 
+  const start = (currentPage - 1) * 20;
+  const end = start + 20;
+  const total = Math.ceil(historyIds.length / 20) || 1;
+
   useEffect(() => {
     if (historyIds.length === 0) return;
+    setIsLoading(true);
     const indexApi = async () => {
       try {
-        const res = await historyIndex({ ids: historyIds });
+        const res = await historyIndex({ ids: historyIds.slice(start, end) });
         if (res) setHistories(res);
       } catch (err) {
         console.error("History index fetch error:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     indexApi();
-  }, [historyIds]);
-
-  const start = (currentPage - 1) * 20;
-  const end = start + 20;
-  const total = Math.ceil(histories.length / 20) || 1;
-
-  if (isLoading) return;
+  }, [historyIds, start, end]);
 
   const handleClick = async (history: HistoryIndexResponse[number]) => {
     const res = await restaurantShow(String(history.locationId), {
@@ -102,22 +103,32 @@ export default function () {
       <div className="p-6 pb-36">
         <h2 className="pb-2 pl-2 font-bold">閲覧履歴</h2>
         <div className="flex flex-col gap-2">
-          {histories.slice(start, end).map((history) => (
-            <div
-              onClick={() => {
-                handleClick(history);
-              }}
-              key={history.id}
-              className="bg-white p-2 flex gap-2 items-center"
-            >
-              <Pin
-                className={`flex-shrink-0 ${
-                  history.isKeeped ? "text-primary" : "text-black"
-                }`}
-              />
-              <p className="flex flex-wrap">{history.name}</p>
-            </div>
-          ))}
+          {isLoading ? (
+            <>
+              {Array.from({ length: 15 }).map((_, index) => (
+                <Skeleton key={index} className="h-[36px]" />
+              ))}
+            </>
+          ) : (
+            <>
+              {histories.map((history) => (
+                <div
+                  onClick={() => {
+                    handleClick(history);
+                  }}
+                  key={history.id}
+                  className="bg-white p-2 flex gap-2 items-center"
+                >
+                  <Pin
+                    className={`flex-shrink-0 ${
+                      history.isKeeped ? "text-primary" : "text-black"
+                    }`}
+                  />
+                  <p className="flex flex-wrap">{history.name}</p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
 
