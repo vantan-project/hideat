@@ -52,7 +52,7 @@ export default function () {
     };
 
     showApi();
-  }, []);
+  }, [restaurantId]);
 
   return (
     <div className="p-6">
@@ -89,6 +89,20 @@ export default function () {
                 <ImagePlus className="w-12 h-12" />
               </label>
             </div>
+            {restaurant.imageUrls.map((url, index) => (
+              <div
+                key={index}
+                className="aspect-square overflow-hidden flex items-center bg-gray rounded-xl"
+              >
+                <Image
+                  width={100}
+                  height={100}
+                  alt={`imageFile ${index}`}
+                  src={url}
+                  className="w-full object-cover"
+                />
+              </div>
+            ))}
             {imageFiles.map((file, index) => (
               <div
                 key={index}
@@ -238,8 +252,8 @@ export default function () {
                 height: "500px",
               }}
               center={{
-                lat: restaurant.latitude,
-                lng: restaurant.longitude,
+                lat: Number(restaurant.latitude),
+                lng: Number(restaurant.longitude),
               }}
               zoom={16}
               options={{
@@ -252,16 +266,16 @@ export default function () {
                   const lng = e.latLng.lng();
                   setRestaurant({
                     ...restaurant,
-                    latitude: lat,
-                    longitude: lng,
+                    latitude: Number(lat),
+                    longitude: Number(lng),
                   });
                 }
               }}
             >
               <Marker
                 position={{
-                  lat: restaurant.latitude,
-                  lng: restaurant.longitude,
+                  lat: Number(restaurant.latitude),
+                  lng: Number(restaurant.longitude),
                 }}
               />
             </GoogleMap>

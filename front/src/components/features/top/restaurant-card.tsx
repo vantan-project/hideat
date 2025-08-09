@@ -33,6 +33,7 @@ export function RestaurantCard({
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     language: "ja",
+    libraries: ["maps", "places"],
   });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -76,8 +77,8 @@ export function RestaurantCard({
       isGoogle: image.isGoogle,
       url: image.url || "",
       locationId: String(image.restaurant.id),
-      latitude: image.restaurant.latitude,
-      longitude: image.restaurant.longitude,
+      latitude: Number(image.restaurant.latitude),
+      longitude: Number(image.restaurant.longitude,)
     });
 
     const keepCookies = Cookies.get("keep");
@@ -148,8 +149,8 @@ export function RestaurantCard({
                       height: "200px",
                     }}
                     center={{
-                      lat: image.restaurant.latitude,
-                      lng: image.restaurant.longitude,
+                      lat: Number(image.restaurant.latitude),
+                      lng: Number(image.restaurant.longitude),
                     }}
                     zoom={15}
                     options={{
@@ -158,8 +159,8 @@ export function RestaurantCard({
                   >
                     <Marker
                       position={{
-                        lat: image.restaurant.latitude,
-                        lng: image.restaurant.longitude,
+                        lat: Number(image.restaurant.latitude),
+                        lng: Number(image.restaurant.longitude),
                       }}
                     />
                   </GoogleMap>

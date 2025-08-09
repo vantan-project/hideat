@@ -18,7 +18,7 @@ export default function () {
     longitude: 0,
     categoryId: null,
     radius: 1000,
-    limit: 1,
+    limit: 10,
   });
   const [images, setImages] = useState<ImageIndexResponse>([]);
   const [isLoading, setIsLoading] = useState(true);

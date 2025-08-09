@@ -14,6 +14,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/token', function() {
         return response()->json([
             'success' => true,
+            'restaurantId' => request()->user()->restaurant_id,
         ]);
     });
     Route::prefix('user')->group(function () {

@@ -12,3 +12,7 @@
   --color-tabelog: #f18d09;
   --color-gnavi: #dd0014;
 }
+
+.next-icon {
+  display: none;
+}
