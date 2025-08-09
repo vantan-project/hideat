@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 
 class GoogleService
@@ -86,6 +87,7 @@ class GoogleService
 
         return $photos;
     }
+
     public function getPlaceDetails(string $placeId): array
     {
         $response = Http::withHeaders([
@@ -108,4 +110,26 @@ class GoogleService
         ];
     }
 
+    public function getCoordinatesBatch(array $placeIds): array
+    {
+        $responses = Http::pool(fn (Pool $pool) => [
+            ...array_map(fn ($placeId) =>
+                $pool->withHeaders([
+                    'Content-Type'    => 'application/json',
+                    'X-Goog-Api-Key'  => $this->apiKey,
+                    'X-Goog-FieldMask'=> 'location.latitude,location.longitude',
+                ])->get("https://places.googleapis.com/v1/places/{$placeId}"),
+            $placeIds)
+        ]);
+
+        return collect($responses)->mapWithKeys(function ($response, $index) use ($placeIds) {
+            $placeId = $placeIds[$index];
+            $data = $response->json();
+
+            return [$placeId => [
+                'latitude' => $data['location']['latitude'] ?? null,
+                'longitude' => $data['location']['longitude'] ?? null,
+            ]];
+        })->toArray();
+    }
 }

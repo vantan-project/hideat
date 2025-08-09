@@ -38,8 +38,8 @@ class AuthController extends Controller
     public function signUp(AuthSignUpRequest $request) {
         $user = $request->input('user');
         $restaurant = $request->input('restaurant');
-        $categoryIds = $request->input('restaurant.categoryIds');
-        $files = $request->file('restaurant.imageFiles');
+        $categoryIds = $request->input('restaurant.categoryIds', []);
+        $files = $request->file('restaurant.imageFiles', []);
 
         $createdUser = DB::transaction(function () use ($user, $restaurant, $categoryIds, $files) {
             $googleService = new GoogleService();
@@ -85,5 +85,30 @@ class AuthController extends Controller
             "messages" => ["登録が完了しました。"],
             "authToken" => $createdUser->createToken('authToken')->plainTextToken,
         ]);
+    }
+
+    public function destroy() {
+        $restaurant = request()->user()->restaurant;
+
+        if (!$restaurant) {
+            return response()->json([
+                "success" => false,
+                "messages" => ["レストランが見つかりません。"]
+            ], 404);
+        }
+
+        try {
+            $restaurant->delete();
+
+            return response()->json([
+                "success" => true,
+                "messages" => ["削除が完了しました。"]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "messages" => ["削除に失敗しました。"]
+            ], 500);
+        }
     }
 }

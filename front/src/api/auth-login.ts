@@ -9,8 +9,8 @@ export type AuthLoginResponse =
   | {
       success: true;
       messages: Array<string>;
-      authToken?: string;
-      restaurantId?: number;
+      authToken: string;
+      restaurantId: number;
     }
   | {
       success: false;

@@ -41,7 +41,7 @@ class AuthSignUpRequest extends FormRequest
             'restaurant.categoryIds.*' => ['integer', 'exists:categories,id'],
 
             'restaurant.imageFiles' => ['array'],
-            'restaurant.imageFiles.*' => ['file', 'image', 'max:5120', 'mimes:jpg,jpeg,png,webp'],
+            // 'restaurant.imageFiles.*' => ['file', 'image', 'max:5120'],
         ];
     }
 

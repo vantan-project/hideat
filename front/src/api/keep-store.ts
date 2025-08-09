@@ -1,0 +1,32 @@
+import axios from "axios";
+
+export type KeepStoreRequest = {
+  name: string;
+  isGoogle: boolean;
+  url: string;
+  locationId: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type KeepStoreResponse = {
+  id: number;
+  success: boolean;
+};
+
+export async function keepStore(
+  req: KeepStoreRequest
+): Promise<KeepStoreResponse> {
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/keep`;
+
+  return axios
+    .post<KeepStoreResponse>(apiUrl, req)
+    .then((res) => res.data)
+    .catch((err) => {
+      console.warn(err);
+      return {
+        id: 0,
+        success: false,
+      };
+    });
+}

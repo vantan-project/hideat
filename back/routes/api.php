@@ -5,6 +5,8 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\KeepController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +19,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user')->group(function () {
         Route::post('/', [UserController::class, 'store']);
         Route::get('/', [UserController::class, 'index']);
-        Route::delete('/{id}', [UserController::class, 'destory']);
+        Route::delete('/{id}', [UserController::class, 'destroy']);
+    });
+    Route::prefix('auth')->group(function () {
+        Route::delete('/', [AuthController::class, 'destroy']);
     });
 });
 
@@ -36,4 +41,15 @@ Route::prefix('category')->group(function () {
 
 Route::prefix('restaurant')->group(function () {
     Route::get('/{id}', [RestaurantController::class, 'show']);
+});
+
+Route::prefix('history')->group(function () {
+    Route::post('/', [HistoryController::class, 'store']);
+    Route::get('/', [HistoryController::class, 'index']);
+    Route::patch('/keep/{id}', [HistoryController::class, 'keep']);
+});
+
+Route::prefix('keep')->group(function () {
+    Route::post('/', [KeepController::class, 'store']);
+    Route::get('/', [KeepController::class, 'index']);
 });

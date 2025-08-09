@@ -45,7 +45,7 @@ class StoreUserRequest extends FormRequest
             'password.required' => 'パスワードは必須です。',
             'password.string' => 'パスワードは文字列で入力してください。',
         ];
-    }    
+    }
 
     public function failedValidation(Validator $validator)
     {

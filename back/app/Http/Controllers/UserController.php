@@ -12,6 +12,7 @@ class UserController extends Controller
         $restaurantId = request()->user()->restaurant_id;
         $users = User::where('restaurant_id', $restaurantId)->get()->map(function($user) {
             return [
+                "id" => $user["id"],
                 "name" => $user["name"],
                 "email" => $user["email"]
             ];
@@ -23,11 +24,18 @@ class UserController extends Controller
 
     }
 
-    public function destory($id) {
-        $restaurantId = request()->user()->restaurant_id;
-        
-        $user = User::where('id', $id)->where('restaurant_id', $restaurantId);
-        $user->delete();
+    public function destroy($id) {
+        $user = request()->user();
+
+        if ($user->id === (int)$id) {
+            return response()->json([
+                'success' => false,
+                'messages' => ["自分自身を削除することはできません。"]
+            ], 403);
+        }
+        $targetUser = User::where('id', $id)->where('restaurant_id', $user->restaurant_id);
+
+        $targetUser->delete();
         return response()->json([
             'success' => true,
             'messages' => ["ユーザーを削除しました。"]
@@ -46,7 +54,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'ユーザーを登録しました。'
+            'messages' => ['ユーザーを登録しました。']
         ], 201);
     }
 }

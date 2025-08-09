@@ -50,6 +50,9 @@ class ImageController extends Controller
                         'name' => $item->restaurant->name,
                         'mapUrl' => $item->restaurant->map_url,
 
+                        'latitude' => $item->restaurant->latitude,
+                        'longitude' => $item->restaurant->longitude,
+
                         'instagramUrl' => $item->restaurant->instagram_url,
                         'tiktokUrl'   => $item->restaurant->tiktok_url,
                         'xUrl' => $item->restaurant->x_url,
@@ -75,7 +78,10 @@ class ImageController extends Controller
             $googleService = new GoogleService();
             $googleImages = collect(
                 $googleService->getPlacePhotos($latitude, $longitude, $radius, $categoryName, $need)
-            )->map(function ($googleImage) use ($googleService) {
+            );
+
+            $coordinates = $googleService->getCoordinatesBatch($googleImages->pluck('id')->toArray());
+            $googleImages = $googleImages->map(function ($googleImage) use ($googleService, $coordinates) {
                 return [
                     'url' => $googleImage['url'],
                     'isGoogle' => true,
@@ -83,6 +89,9 @@ class ImageController extends Controller
                         'id' => $googleImage['id'],
                         'name' => $googleImage['name'],
                         'mapUrl' => $googleService->getPlaceMapUrl($googleImage['id']),
+
+                        'latitude' => $coordinates[$googleImage['id']]['latitude'] ?? null,
+                        'longitude' => $coordinates[$googleImage['id']]['longitude'] ?? null,
 
                         'instagramUrl' => null,
                         'tiktokUrl'   => null,
