@@ -10,4 +10,8 @@ class Image extends Model
         'restaurant_id',
         'url',
     ];
+
+    public function restaurant() {
+        return $this->belongsTo(Restaurant::class);
+    }
 }

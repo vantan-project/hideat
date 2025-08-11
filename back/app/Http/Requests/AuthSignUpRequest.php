@@ -36,8 +36,12 @@ class AuthSignUpRequest extends FormRequest
             'restaurant.lineUrl' => ['nullable', 'url'],
             'restaurant.tabelogUrl' => ['nullable', 'url'],
             'restaurant.gnaviUrl' => ['nullable', 'url'],
+
             'restaurant.categoryIds' => ['required', 'array'],
             'restaurant.categoryIds.*' => ['integer', 'exists:categories,id'],
+
+            'restaurant.imageFiles' => ['array'],
+            // 'restaurant.imageFiles.*' => ['file', 'image', 'max:5120'],
         ];
     }
 
@@ -73,9 +77,14 @@ class AuthSignUpRequest extends FormRequest
 
             'restaurant.categoryIds.required' => 'カテゴリーは必須です。',
             'restaurant.categoryIds.array' => 'カテゴリーは配列形式で送信してください。',
-
             'restaurant.categoryIds.*.integer' => 'カテゴリーIDは整数である必要があります。',
             'restaurant.categoryIds.*.exists' => '指定されたカテゴリーは存在しません。',
+
+            'restaurant.imageFiles.array' => '画像ファイルは配列で送信してください。',
+            'restaurant.imageFiles.*.file' => 'アップロードされたファイルが不正です。',
+            'restaurant.imageFiles.*.image' => '画像ファイル形式（jpg、jpeg、png、webp）を指定してください。',
+            'restaurant.imageFiles.*.max' => '画像ファイルは5MB以内でアップロードしてください。',
+            'restaurant.imageFiles.*.mimes' => '許可されている画像形式は jpg、jpeg、png、webp です。',
         ];
     }
 

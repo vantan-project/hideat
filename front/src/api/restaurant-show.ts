@@ -7,6 +7,8 @@ export type RestaurantShowRequest = {
 export type RestaurantShowResponse = {
   name: string;
   mapUrl: string;
+  latitude: number;
+  longitude: number;
   instagramUrl: string;
   tiktokUrl: string;
   xUrl: string;
@@ -15,10 +17,11 @@ export type RestaurantShowResponse = {
   tabelogUrl: string;
   gnaviUrl: string;
 
+  imageUrls: Array<string>;
   categoryIds: Array<number>;
 };
 
-export async function restaurantShow(id: number, req: RestaurantShowRequest) {
+export async function restaurantShow(id: string, req: RestaurantShowRequest) {
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/restaurant/${id}`;
 
   return axios
